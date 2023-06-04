@@ -1,0 +1,69 @@
+PODS:
+  - Alamofire (5.7.1)
+  - RockSchedule (0.1.0):
+    - RockSchedule/CacheData (= 0.1.0)
+    - RockSchedule/CountedSet (= 0.1.0)
+    - RockSchedule/Extension (= 0.1.0)
+    - RockSchedule/Layout (= 0.1.0)
+    - RockSchedule/LinkedList (= 0.1.0)
+    - RockSchedule/Locate (= 0.1.0)
+    - RockSchedule/OrderedSet (= 0.1.0)
+    - RockSchedule/Request (= 0.1.0)
+    - RockSchedule/Service (= 0.1.0)
+    - RockSchedule/Solve (= 0.1.0)
+    - RockSchedule/Views (= 0.1.0)
+  - RockSchedule/CacheData (0.1.0):
+    - SwiftyJSON
+    - WCDB.swift
+  - RockSchedule/CountedSet (0.1.0)
+  - RockSchedule/Extension (0.1.0)
+  - RockSchedule/Layout (0.1.0)
+  - RockSchedule/LinkedList (0.1.0)
+  - RockSchedule/Locate (0.1.0)
+  - RockSchedule/OrderedSet (0.1.0)
+  - RockSchedule/Request (0.1.0):
+    - Alamofire
+    - RockSchedule/CacheData
+    - SwiftyJSON
+  - RockSchedule/Service (0.1.0):
+    - RockSchedule/Layout
+    - RockSchedule/Solve
+    - RockSchedule/Views
+  - RockSchedule/Solve (0.1.0):
+    - RockSchedule/CacheData
+    - RockSchedule/LinkedList
+  - RockSchedule/Views (0.1.0)
+  - SQLiteRepairKit (1.3.0):
+    - WCDBOptimizedSQLCipher (~> 1.3.0)
+  - SwiftyJSON (5.0.1)
+  - WCDB.swift (1.1.0):
+    - SQLiteRepairKit (~> 1.3.0)
+    - WCDBOptimizedSQLCipher (~> 1.3.0)
+  - WCDBOptimizedSQLCipher (1.3.0)
+
+DEPENDENCIES:
+  - RockSchedule (from `../`)
+
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - Alamofire
+    - SQLiteRepairKit
+    - SwiftyJSON
+    - WCDB.swift
+    - WCDBOptimizedSQLCipher
+
+EXTERNAL SOURCES:
+  RockSchedule:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  Alamofire: 0123a34370cb170936ae79a8df46cc62b2edeb88
+  RockSchedule: 762b31e1a09647951783744cc29816f38a82532b
+  SQLiteRepairKit: a66145aadae91886c800f75e16f5cc6476af1a93
+  SwiftyJSON: 2f33a42c6fbc52764d96f13368585094bfd8aa5e
+  WCDB.swift: 39e28fe29b5a3bf2927d9fb9218978f19bd49ff0
+  WCDBOptimizedSQLCipher: fc5d49fe6761e54aad29e88da01b6fc1283e5759
+
+PODFILE CHECKSUM: c9ff73b0b65a3c0f74ac8ca9d711ec5458eda9a0
+
+COCOAPODS: 1.12.1

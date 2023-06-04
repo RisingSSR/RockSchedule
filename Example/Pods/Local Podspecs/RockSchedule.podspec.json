@@ -1,0 +1,120 @@
+{
+  "name": "RockSchedule",
+  "version": "0.1.0",
+  "summary": "掌上重邮·课表相关",
+  "description": "Swift Schedule for iOS 掌上重邮 ⓒRedrock Staff",
+  "swift_versions": [
+    "5"
+  ],
+  "homepage": "https://github.com/RisingSSR/RockSchedule",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "RisingSSR": "2769119954@qq.com"
+  },
+  "source": {
+    "git": "https://github.com/RisingSSR/RockSchedule.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "11.0"
+  },
+  "subspecs": [
+    {
+      "name": "LinkedList",
+      "source_files": "RockSchedule/Classes/LinkedList/**/*.swift"
+    },
+    {
+      "name": "OrderedSet",
+      "source_files": "RockSchedule/Classes/OrderedSet/**/*.swift"
+    },
+    {
+      "name": "CountedSet",
+      "source_files": "RockSchedule/Classes/CountedSet/**/*.swift"
+    },
+    {
+      "name": "Extension",
+      "source_files": "RockSchedule/Classes/Extension/**/*.swift"
+    },
+    {
+      "name": "Locate",
+      "source_files": "RockSchedule/Classes/DataSource/Locate.swift"
+    },
+    {
+      "name": "Request",
+      "source_files": "RockSchedule/Classes/DataSource/Request.swift",
+      "dependencies": {
+        "RockSchedule/CacheData": [
+
+        ],
+        "SwiftyJSON": [
+
+        ],
+        "Alamofire": [
+
+        ]
+      }
+    },
+    {
+      "name": "CacheData",
+      "source_files": [
+        "RockSchedule/Classes/DataSource/Cache.swift",
+        "RockSchedule/Classes/DataSource/CombineItem.swift",
+        "RockSchedule/Classes/DataSource/Course.swift",
+        "RockSchedule/Classes/DataSource/Key.swift"
+      ],
+      "dependencies": {
+        "SwiftyJSON": [
+
+        ],
+        "WCDB.swift": [
+
+        ]
+      }
+    },
+    {
+      "name": "Solve",
+      "source_files": [
+        "RockSchedule/Classes/DataSource/Map.swift",
+        "RockSchedule/Classes/DataSource/DoubleMap.swift"
+      ],
+      "dependencies": {
+        "RockSchedule/LinkedList": [
+
+        ],
+        "RockSchedule/CacheData": [
+
+        ]
+      }
+    },
+    {
+      "name": "Views",
+      "source_files": "RockSchedule/Classes/Views/**/*.swift",
+      "resources": [
+        "RockSchedule/Assets/Schedule/*.xcassets"
+      ]
+    },
+    {
+      "name": "Layout",
+      "source_files": "RockSchedule/Classes/Layout/**/*.swift"
+    },
+    {
+      "name": "Service",
+      "source_files": "RockSchedule/Classes/Service/**/*.swift",
+      "dependencies": {
+        "RockSchedule/Solve": [
+
+        ],
+        "RockSchedule/Layout": [
+
+        ],
+        "RockSchedule/Views": [
+
+        ]
+      }
+    }
+  ],
+  "swift_version": "5"
+}

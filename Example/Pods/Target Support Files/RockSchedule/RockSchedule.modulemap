@@ -1,0 +1,6 @@
+framework module RockSchedule {
+  umbrella header "RockSchedule-umbrella.h"
+
+  export *
+  module * { export * }
+}
