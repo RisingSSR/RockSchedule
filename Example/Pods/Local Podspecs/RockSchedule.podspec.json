@@ -35,8 +35,33 @@
       "source_files": "RockSchedule/Classes/CountedSet/**/*.swift"
     },
     {
+      "name": "LRUCache",
+      "source_files": "RockSchedule/Classes/LRUCache/**/*.swift"
+    },
+    {
+      "name": "RyNetManager",
+      "source_files": "RockSchedule/Classes/RyNetManager/**/*.swift",
+      "dependencies": {
+        "SwiftyJSON": [
+
+        ],
+        "Alamofire": [
+
+        ]
+      }
+    },
+    {
       "name": "Extension",
-      "source_files": "RockSchedule/Classes/Extension/**/*.swift"
+      "subspecs": [
+        {
+          "name": "Foundation",
+          "source_files": "RockSchedule/Classes/Extension/FoundationExtension.swift"
+        },
+        {
+          "name": "UIKit",
+          "source_files": "RockSchedule/Classes/Extension/UIKitExtension.swift"
+        }
+      ]
     },
     {
       "name": "Locate",
@@ -49,10 +74,7 @@
         "RockSchedule/CacheData": [
 
         ],
-        "SwiftyJSON": [
-
-        ],
-        "Alamofire": [
+        "RockSchedule/RyNetManager": [
 
         ]
       }
@@ -71,6 +93,12 @@
         ],
         "WCDB.swift": [
 
+        ],
+        "RockSchedule/Extension/Foundation": [
+
+        ],
+        "RockSchedule/LRUCache": [
+
         ]
       }
     },
@@ -86,15 +114,16 @@
         ],
         "RockSchedule/CacheData": [
 
+        ],
+        "RockSchedule/OrderedSet": [
+
         ]
       }
     },
     {
       "name": "Views",
       "source_files": "RockSchedule/Classes/Views/**/*.swift",
-      "resources": [
-        "RockSchedule/Assets/Schedule/*.xcassets"
-      ]
+      "resources": "RockSchedule/Assets/*.xcassets"
     },
     {
       "name": "Layout",

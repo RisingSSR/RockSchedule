@@ -67,13 +67,13 @@ public struct Key: Codable {
 }
 
 // MARK: ex Key
-extension Key {
+public extension Key {
     
-    public static func &= (lhs: inout Key, rhs: Key.Service) {
+    static func &= (lhs: inout Key, rhs: Key.Service) {
         lhs.service = lhs.service.union(rhs)
     }
     
-    public static func |= (lhs: inout Key, rhs: Key.Service) {
+    static func |= (lhs: inout Key, rhs: Key.Service) {
         lhs.service = lhs.service.intersection(rhs)
     }
 }

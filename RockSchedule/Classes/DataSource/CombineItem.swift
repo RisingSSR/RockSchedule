@@ -11,7 +11,7 @@ import Foundation
 
 public class CombineItem {
     
-    public let key: Key
+    public var key: Key
     public private(set) var values: [Course]
     
     public init(key: Key, values: [Course] = []) {

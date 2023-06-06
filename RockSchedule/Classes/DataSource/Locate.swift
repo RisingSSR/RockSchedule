@@ -38,6 +38,7 @@ public class AnyLocatable: NSObject {
     
     public override var hash: Int {
         return box.hashx()
+        let a = IndexSet()
     }
     
     public static func == (lhs: AnyLocatable, rhs: AnyLocatable) -> Bool {

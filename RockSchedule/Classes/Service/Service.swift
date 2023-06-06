@@ -9,7 +9,7 @@ import UIKit
  
 open class Service: NSObject, UICollectionViewDataSource, UICollectionViewDelegate, CollectionViewLayoutDataSource {
     
-    public private(set) var map = Map()
+    public private(set) var map = DoubleMap()
     private var _scrollViewStartPosPoint: CGPoint = .zero
     private var _scrollDirection: Int = 0
     
@@ -23,40 +23,40 @@ open class Service: NSObject, UICollectionViewDataSource, UICollectionViewDelega
         layout.dataSource = self
         
         view = UICollectionView(frame: CGRect(x: 0, y: 0, width: width, height: 0), collectionViewLayout: layout)
-        /*
-         [*view registerClass:ScheduleCollectionViewCell.class forCellWithReuseIdentifier:ScheduleCollectionViewCellReuseIdentifier]; // cell
-         [*view registerClass:ScheduleSupplementaryCollectionViewCell.class forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:ScheduleSupplementaryCollectionViewCellReuseIdentifier]; // section header
-         [*view registerClass:ScheduleSupplementaryCollectionViewCell.class forSupplementaryViewOfKind:UICollectionElementKindSectionLeading withReuseIdentifier:ScheduleSupplementaryCollectionViewCellReuseIdentifier]; // section leading
-         [*view registerClass:SchedulePlaceholderCollectionViewCell.class forSupplementaryViewOfKind:UICollectionElementKindSectionPlaceholder withReuseIdentifier:SchedulePlaceholderCollectionViewCellReuseIdentifier]; // section placeholder
-         [*view registerClass:ScheduleLeadingHolderCollectionViewCell.class forSupplementaryViewOfKind:UICollectionElementKindSectionHolder withReuseIdentifier:ScheduleLeadingHolderCollectionViewCellReuseIdentifier]; // section holder
-         
-         (*view).dataSource = self;
-         (*view).delegate = self;
-         */
+        view.register(ContentCollectionViewCell.self, forCellWithReuseIdentifier: ContentCollectionViewCell.reuseIdentifier)
     }
     
+    // MARK: UICollectionViewDataSource
+    
     public func numberOfSections(in collectionView: UICollectionView) -> Int {
-        max(map.finalSet.count, 24)
+        max(map.finalAry.count, 24)
     }
     
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        map.finalSet[section]?.count ?? 0
+        if section < 0 || section >= map.finalAry[section].count { return 0 }
+        return map.finalAry[section].count
     }
     
     open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        UICollectionViewCell()
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ContentCollectionViewCell.reuseIdentifier, for: indexPath) as! ContentCollectionViewCell
+        
+        
+        
+        return cell
     }
     
+    // MARK: CollectionViewLayoutDataSource
+    
     open func collectionView(_ collectionView: UICollectionView, persentFor indexPath: IndexPath) -> CGFloat {
-        3.0
+        1
     }
     
     open func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: CollectionViewLayout, locationForItemAt indexPath: IndexPath) -> AnyLocatable {
-        
+        map.pointMap.first!.key
     }
     
-    open func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: CollectionViewLayout, lenthAtLocale locate: AnyLocatable) -> Int {
-        
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: CollectionViewLayout, lenthLocate locate: AnyLocatable, at indexPath: IndexPath) -> Int {
+        2
+//        map.finalAry[indexPath.section][indexPath.item].locate.count
     }
-    
 }

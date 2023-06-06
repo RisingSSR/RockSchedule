@@ -21,36 +21,29 @@ open class Map {
         public let key: Key             // 个人信息
         public let value: Course        // 课程信息
         public let kind: Kind           // 所属类型
-    }
-    
-    public struct Origin {
-        public var locate: AnyLocatable
-        public let node: Node
+        
+        public var locate: AnyLocatable!
+        public var locations = IndexSet()
     }
     
     public var sno: String?
     
     public private(set) var pointMap: [AnyLocatable: LinkedList<Node>] = [:]
-    public private(set) var finalSet: [Int: Set<Origin>] = [:]
+    public private(set) var finalMap: [Int: OrderedSet<Node>] = [:]
     
-    public init() {
-    }
+    public init() { }
     
-    open func map(course: Course, with key: Key) {
+    open func insert(course: Course, with key: Key) {
         let kind = self.kind(of: course, with: key)
-        let node = Node(key: key, value: course, kind: kind)
+        var node = Node(key: key, value: course, kind: kind)
         for locate in course.locates {
+            node.locate = locate
             insert(node: node, in: locate)
         }
     }
     
     public func insert(node newValue: Node, in locate: AnyLocatable) {
-        let origin = Origin(locate: locate, node: newValue)
         if var list = pointMap[locate] {
-            let oldOrigin = Origin(locate: locate, node: list.head!)
-            finalSet[locate.section]?.remove(oldOrigin)
-            finalSet[locate.section]?.insert(origin)
-            
             let index = list.firstIndex { oldValue in
                 if newValue.kind < oldValue.kind { return true }
                 if newValue.kind == oldValue.kind {
@@ -65,18 +58,22 @@ open class Map {
         } else {
             pointMap[locate] = LinkedList(arrayLiteral: newValue)
         }
-        
-        if var set = finalSet[locate.section] {
-            if let oldValue = set.remove(origin) {
-                if origin.locate.location <= oldValue.locate.location {
-                    finalSet[locate.section]?.update(with: origin)
-                }
-            } else {
-                finalSet[locate.section]?.insert(origin)
+    }
+    
+    open func finish() {
+        for entry in pointMap {
+            if finalMap[entry.key.section] == nil { finalMap[entry.key.section] = OrderedSet() }
+            
+            if var node = entry.value.first {
+                
+                
             }
-        } else {
-            finalSet[locate.section] = Set(arrayLiteral: origin)
         }
+    }
+    
+    open func removeAll() {
+        pointMap.removeAll()
+        finalMap.removeAll()
     }
     
     open func kind(of course: Course, with key: Key) -> Kind {
@@ -126,19 +123,19 @@ extension Map.Node: Hashable {
 }
 
 // MARK: ex Map.Origin: Hashable
-extension Map.Origin: Hashable {
-    public static func == (lhs: Map.Origin, rhs: Map.Origin) -> Bool {
-        lhs.node == rhs.node
-    }
-
-    public var hashValue: Int {
-        node.hashValue
-    }
-
-    public func hash(into hasher: inout Hasher) {
-        node.hash(into: &hasher)
-    }
-}
+//extension Map.Origin: Hashable {
+//    public static func == (lhs: Map.Origin, rhs: Map.Origin) -> Bool {
+//        lhs.node == rhs.node
+//    }
+//
+//    public var hashValue: Int {
+//        node.hashValue
+//    }
+//
+//    public func hash(into hasher: inout Hasher) {
+//        node.hash(into: &hasher)
+//    }
+//}
 
 // MARK: ex Map.Node: CustomDebugStringConvertible
 extension Map.Node: CustomDebugStringConvertible {

@@ -23,6 +23,7 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '11.0'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   
+  # 作为第三方库使用
   
   # LinkedList
   s.subspec 'LinkedList' do |list|
@@ -39,9 +40,29 @@ Pod::Spec.new do |s|
       countedSet.source_files = 'RockSchedule/Classes/CountedSet/**/*.swift'
   end
   
-  # Foundation扩展
+  # LRUCache
+  s.subspec 'LRUCache' do |lruCache|
+      lruCache.source_files = 'RockSchedule/Classes/LRUCache/**/*.swift'
+  end
+  
+  
+  # 正常的东西
+  
+  # RyNetManager
+  s.subspec 'RyNetManager' do |ryNetManager|
+      ryNetManager.source_files = 'RockSchedule/Classes/RyNetManager/**/*.swift'
+      ryNetManager.dependency 'SwiftyJSON'
+      ryNetManager.dependency 'Alamofire'
+  end
+  
+  # Extension扩展
   s.subspec 'Extension' do |extension|
-      extension.source_files = 'RockSchedule/Classes/Extension/**/*.swift'
+      extension.subspec 'Foundation' do |foundation|
+          foundation.source_files = 'RockSchedule/Classes/Extension/FoundationExtension.swift'
+      end
+      extension.subspec 'UIKit' do |uikit|
+          uikit.source_files = 'RockSchedule/Classes/Extension/UIKitExtension.swift'
+      end
   end
   
   # 坐标点协议
@@ -53,8 +74,7 @@ Pod::Spec.new do |s|
   s.subspec 'Request' do |request|
       request.source_files = 'RockSchedule/Classes/DataSource/Request.swift'
       request.dependency 'RockSchedule/CacheData'
-      request.dependency 'SwiftyJSON'
-      request.dependency 'Alamofire'
+      request.dependency 'RockSchedule/RyNetManager'
   end
   
   # 数据缓存
@@ -66,6 +86,8 @@ Pod::Spec.new do |s|
         'RockSchedule/Classes/DataSource/Key.swift'
       cacheData.dependency 'SwiftyJSON'
       cacheData.dependency 'WCDB.swift'
+      cacheData.dependency 'RockSchedule/Extension/Foundation'
+      cacheData.dependency 'RockSchedule/LRUCache'
   end
   
   # 数据处理
@@ -75,12 +97,13 @@ Pod::Spec.new do |s|
         'RockSchedule/Classes/DataSource/DoubleMap.swift'
       solve.dependency 'RockSchedule/LinkedList'
       solve.dependency 'RockSchedule/CacheData'
+      solve.dependency 'RockSchedule/OrderedSet'
   end
   
   # 视图
   s.subspec 'Views' do |views|
       views.source_files = 'RockSchedule/Classes/Views/**/*.swift'
-      views.resource = ['RockSchedule/Assets/Schedule/*.xcassets']
+      views.resources = "RockSchedule/Assets/*.xcassets"
   end
   
   # 布局

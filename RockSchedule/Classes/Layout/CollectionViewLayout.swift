@@ -7,11 +7,11 @@
 
 import UIKit
 
-extension UICollectionView {
-    public static let header: String = "header"
-    public static let leading: String = "leading"
-    public static let placehoder: String = "placehoder"
-    public static let pointer: String = "pointer"
+public extension UICollectionView {
+    static let header: String = "header"
+    static let leading: String = "leading"
+    static let placehoder: String = "placehoder"
+    static let pointer: String = "pointer"
 }
 
 @objc
@@ -27,7 +27,7 @@ public protocol CollectionViewLayoutDataSource: NSObjectProtocol {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: CollectionViewLayout, locationForItemAt indexPath: IndexPath) -> AnyLocatable
     
     @objc
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: CollectionViewLayout, lenthAtLocale locate: AnyLocatable) -> Int
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: CollectionViewLayout, lenthLocate locate: AnyLocatable, at indexPath: IndexPath) -> Int
 }
 
 open class CollectionViewLayout: UICollectionViewLayout {
@@ -135,7 +135,7 @@ open class CollectionViewLayout: UICollectionViewLayout {
             if let locate = dataSource?.collectionView(collectionView!, layout: self, locationForItemAt: indexPath) {
                 let x = CGFloat(locate.section) * (collectionView?.frame.width ?? 0) + widthForLeadingSupplementaryView + CGFloat(locate.week - 1) * (itemSize.width + columnSpacing)
                 let y = heightForHeaderSupplementaryView + CGFloat(locate.location - 1) * (itemSize.height + lineSpacing)
-                let lenth = dataSource?.collectionView(collectionView!, layout: self, lenthAtLocale: locate) ?? 0
+                let lenth = dataSource?.collectionView(collectionView!, layout: self, lenthLocate: locate, at: indexPath) ?? 0
                 let height = CGFloat(lenth) * itemSize.height + CGFloat(lenth - 1) * columnSpacing
                 let frame = CGRect(x: x, y: y, width: itemSize.width, height: height)
                 attributes.frame = frame

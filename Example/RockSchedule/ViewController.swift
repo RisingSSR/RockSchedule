@@ -17,17 +17,24 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         map.sno = "2021215154"
-        Request.request(attribute: .dataRequest(.student("2021215154"))) { item in
-            print(item)
-            for course in item.values {
-                self.map.map(course: course, with: item.key)
+        Request.request(attribute: .dataRequest(.student("2021215154"))) { response in
+            switch response {
+            case .success(let item):
+                for course in item.values {
+                    self.map.insert(course: course, with: item.key)
+                }
+            case .failure(let error):
+                break
             }
         }
-        
-        Request.request(attribute: .dataRequest(.student("2022212832"))) { item in
-            print(item)
-            for course in item.values {
-                self.map.map(course: course, with: item.key)
+        Request.request(attribute: .dataRequest(.student("2022212832"))) { response in
+            switch response {
+            case .success(let item):
+                for course in item.values {
+                    self.map.insert(course: course, with: item.key)
+                }
+            case .failure(let error):
+                break
             }
         }
     }
@@ -38,17 +45,7 @@ class ViewController: UIViewController {
                 print("\(locate) : \(value)")
             }
         }
-        for (section, sets) in map.finalSet {
-            
-            if section == 4 {
-                
-                print("section \(section)")
-                
-                for set in sets {
-                    print("\(set.locate): \(set.node)")
-                }
-            }
-        }
+        
     }
 
     override func didReceiveMemoryWarning() {
