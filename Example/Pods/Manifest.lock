@@ -13,6 +13,7 @@ PODS:
     - RockSchedule/RyNetManager (= 0.1.0)
     - RockSchedule/Service (= 0.1.0)
     - RockSchedule/Solve (= 0.1.0)
+    - RockSchedule/VCTransitioningDelegate (= 0.1.0)
     - RockSchedule/Views (= 0.1.0)
   - RockSchedule/CacheData (0.1.0):
     - RockSchedule/Extension/Foundation
@@ -43,7 +44,7 @@ PODS:
   - RockSchedule/Solve (0.1.0):
     - RockSchedule/CacheData
     - RockSchedule/LinkedList
-    - RockSchedule/OrderedSet
+  - RockSchedule/VCTransitioningDelegate (0.1.0)
   - RockSchedule/Views (0.1.0)
   - SQLiteRepairKit (1.3.0):
     - WCDBOptimizedSQLCipher (~> 1.3.0)
@@ -70,7 +71,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Alamofire: 0123a34370cb170936ae79a8df46cc62b2edeb88
-  RockSchedule: 4a2fda004dca798262cfc3b54623bbb3353c7a23
+  RockSchedule: 3b83abe5457a2b11bb6ae15896a669060cc07da4
   SQLiteRepairKit: a66145aadae91886c800f75e16f5cc6476af1a93
   SwiftyJSON: 2f33a42c6fbc52764d96f13368585094bfd8aa5e
   WCDB.swift: 39e28fe29b5a3bf2927d9fb9218978f19bd49ff0

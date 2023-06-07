@@ -45,6 +45,12 @@ Pod::Spec.new do |s|
       lruCache.source_files = 'RockSchedule/Classes/LRUCache/**/*.swift'
   end
   
+  # VCTransitioningDelegate
+  s.subspec 'VCTransitioningDelegate' do |vcTransitioningDelegate|
+      vcTransitioningDelegate.source_files = 'RockSchedule/Classes/VCTransitioningDelegate/**/*.swift'
+  end
+  
+
   
   # 正常的东西
   
@@ -97,7 +103,6 @@ Pod::Spec.new do |s|
         'RockSchedule/Classes/DataSource/DoubleMap.swift'
       solve.dependency 'RockSchedule/LinkedList'
       solve.dependency 'RockSchedule/CacheData'
-      solve.dependency 'RockSchedule/OrderedSet'
   end
   
   # 视图

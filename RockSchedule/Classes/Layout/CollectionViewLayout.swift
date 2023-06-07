@@ -91,7 +91,7 @@ open class CollectionViewLayout: UICollectionViewLayout {
         var result = [UICollectionViewLayoutAttributes]()
         numberOfTimeLine = 0
         
-        for s in min(pageCalculation - 1, 0)...min(pageCalculation + numberOfPages, sections) {
+        for s in max(pageCalculation - 1, 0)...min(pageCalculation + numberOfPages, sections) {
             for (kind, _) in suplyCache {
                 numberOfTimeLine = dataSource?.collectionView?(collectionView!, numberOfSupplementaryOf: kind, in: s)
                 let suplyCount = numberOfTimeLine ?? 0

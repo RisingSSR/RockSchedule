@@ -17,33 +17,30 @@ open class Map {
         case others = 2
     }
     
-    public struct Node {
+    public struct Node: Codable {
         public let key: Key             // 个人信息
         public let value: Course        // 课程信息
         public let kind: Kind           // 所属类型
-        
-        public var locate: AnyLocatable!
-        public var locations = IndexSet()
     }
     
     public var sno: String?
     
     public private(set) var pointMap: [AnyLocatable: LinkedList<Node>] = [:]
-    public private(set) var finalMap: [Int: OrderedSet<Node>] = [:]
+    public private(set) var nodeMap: [Node: [IndexSet?]] = [:]
     
     public init() { }
     
     open func insert(course: Course, with key: Key) {
         let kind = self.kind(of: course, with: key)
-        var node = Node(key: key, value: course, kind: kind)
+        let node = Node(key: key, value: course, kind: kind)
         for locate in course.locates {
-            node.locate = locate
             insert(node: node, in: locate)
         }
     }
     
-    public func insert(node newValue: Node, in locate: AnyLocatable) {
+    open func insert(node newValue: Node, in locate: AnyLocatable) {
         if var list = pointMap[locate] {
+            nodeMap[newValue]?[locate.section]?.remove(locate.location)
             let index = list.firstIndex { oldValue in
                 if newValue.kind < oldValue.kind { return true }
                 if newValue.kind == oldValue.kind {
@@ -58,22 +55,16 @@ open class Map {
         } else {
             pointMap[locate] = LinkedList(arrayLiteral: newValue)
         }
-    }
-    
-    open func finish() {
-        for entry in pointMap {
-            if finalMap[entry.key.section] == nil { finalMap[entry.key.section] = OrderedSet() }
-            
-            if var node = entry.value.first {
-                
-                
-            }
+        
+        if let node = pointMap[locate]?.first {
+            if nodeMap[node] == nil { nodeMap[node] = [] }
+            var ordered = nodeMap[node]!
+            while ordered.count <= locate.section {  ordered.append(nil) }
+            var final = ordered[locate.section] ?? IndexSet()
+            final.insert(locate.location)
+            ordered[locate.section] = final
+            nodeMap[node] = ordered
         }
-    }
-    
-    open func removeAll() {
-        pointMap.removeAll()
-        finalMap.removeAll()
     }
     
     open func kind(of course: Course, with key: Key) -> Kind {
@@ -106,13 +97,11 @@ extension Map.Kind: Comparable {
 extension Map.Node: Hashable {
     public static func == (lhs: Map.Node, rhs: Map.Node) -> Bool {
         lhs.key == rhs.key
-        && lhs.kind == rhs.kind
         && lhs.value == rhs.value
     }
 
     public var hashValue: Int {
         key.hashValue << 1
-        + kind.rawValue
         + value.hashValue
     }
 
@@ -121,21 +110,6 @@ extension Map.Node: Hashable {
         value.hash(into: &hasher)
     }
 }
-
-// MARK: ex Map.Origin: Hashable
-//extension Map.Origin: Hashable {
-//    public static func == (lhs: Map.Origin, rhs: Map.Origin) -> Bool {
-//        lhs.node == rhs.node
-//    }
-//
-//    public var hashValue: Int {
-//        node.hashValue
-//    }
-//
-//    public func hash(into hasher: inout Hasher) {
-//        node.hash(into: &hasher)
-//    }
-//}
 
 // MARK: ex Map.Node: CustomDebugStringConvertible
 extension Map.Node: CustomDebugStringConvertible {
@@ -147,19 +121,13 @@ extension Map.Node: CustomDebugStringConvertible {
 // MARK: ex Course
 extension Course {
     
-    private struct Point: Locatable {
-        let section: Int
-        let week: Int
-        let location: Int
-    }
-    
     public var locates: [AnyLocatable] {
         var locate = [AnyLocatable]()
         for period in inPeriods {
             for section in inSections {
-                locate.append(AnyLocatable(Point(section: section, week: inDay, location: period)))
+                locate.append(AnyLocatable(section: section, week: inDay, location: period))
             }
-            locate.append(AnyLocatable(Point(section: 0, week: inDay, location: period)))
+            locate.append(AnyLocatable(section: 0, week: inDay, location: period))
         }
         return locate
     }

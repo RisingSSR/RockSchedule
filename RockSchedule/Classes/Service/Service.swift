@@ -13,7 +13,7 @@ open class Service: NSObject, UICollectionViewDataSource, UICollectionViewDelega
     private var _scrollViewStartPosPoint: CGPoint = .zero
     private var _scrollDirection: Int = 0
     
-    open func seting(collectionView view: inout UICollectionView!, withPrepareWidth width:CGFloat) {
+    open func createCollectionView(prepareWidth width: CGFloat) -> UICollectionView {
         let layout = CollectionViewLayout()
         layout.widthForLeadingSupplementaryView = 30
         layout.lineSpacing = 2
@@ -22,25 +22,30 @@ open class Service: NSObject, UICollectionViewDataSource, UICollectionViewDelega
         layout.heightForHeaderSupplementaryView = ((width - layout.widthForLeadingSupplementaryView) / 7 - layout.columnSpacing) * layout.ratio
         layout.dataSource = self
         
-        view = UICollectionView(frame: CGRect(x: 0, y: 0, width: width, height: 0), collectionViewLayout: layout)
+        let view = UICollectionView(frame: CGRect(x: 0, y: 0, width: width, height: 0), collectionViewLayout: layout)
+        view.delegate = self
+        view.dataSource = self
         view.register(ContentCollectionViewCell.self, forCellWithReuseIdentifier: ContentCollectionViewCell.reuseIdentifier)
+        
+        return view
     }
     
     // MARK: UICollectionViewDataSource
     
     public func numberOfSections(in collectionView: UICollectionView) -> Int {
-        max(map.finalAry.count, 24)
+        print("numberOfSections\(map.final.count)")
+        return max(map.final.count, 24)
     }
     
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if section < 0 || section >= map.finalAry[section].count { return 0 }
-        return map.finalAry[section].count
+        if section >= map.final.count { return 0 }
+        return map.final[section]?.count ?? 0
     }
     
     open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ContentCollectionViewCell.reuseIdentifier, for: indexPath) as! ContentCollectionViewCell
         
-        
+        cell.contentView.backgroundColor = .green
         
         return cell
     }
@@ -52,11 +57,11 @@ open class Service: NSObject, UICollectionViewDataSource, UICollectionViewDelega
     }
     
     open func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: CollectionViewLayout, locationForItemAt indexPath: IndexPath) -> AnyLocatable {
-        map.pointMap.first!.key
+        let rangeElem = map.final[indexPath.section]![indexPath.item].locates
+        return AnyLocatable(section: indexPath.section, week: indexPath.item, location: rangeElem.lowerBound)
     }
     
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: CollectionViewLayout, lenthLocate locate: AnyLocatable, at indexPath: IndexPath) -> Int {
-        2
-//        map.finalAry[indexPath.section][indexPath.item].locate.count
+        map.pointMap[locate]?.count ?? 0
     }
 }

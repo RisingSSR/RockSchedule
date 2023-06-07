@@ -18,9 +18,9 @@ public final class RyNetManager {
     
     private init() {
     #if DEBUG
-        baseURL = "https://debug.example.com"
+        baseURL = "https://be-prod.redrock.cqupt.edu.cn"
     #else
-        baseURL = "https://release.example.com"
+        baseURL = "https://be-dev.redrock.cqupt.edu.cn"
     #endif
     }
     

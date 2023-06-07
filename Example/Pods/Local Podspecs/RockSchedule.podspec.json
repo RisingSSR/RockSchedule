@@ -39,6 +39,10 @@
       "source_files": "RockSchedule/Classes/LRUCache/**/*.swift"
     },
     {
+      "name": "VCTransitioningDelegate",
+      "source_files": "RockSchedule/Classes/VCTransitioningDelegate/**/*.swift"
+    },
+    {
       "name": "RyNetManager",
       "source_files": "RockSchedule/Classes/RyNetManager/**/*.swift",
       "dependencies": {
@@ -113,9 +117,6 @@
 
         ],
         "RockSchedule/CacheData": [
-
-        ],
-        "RockSchedule/OrderedSet": [
 
         ]
       }

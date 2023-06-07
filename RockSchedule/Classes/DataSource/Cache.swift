@@ -57,15 +57,15 @@ public struct Cache {
     
     public func diskItem(for key: Key? = nil, keyName name: Keyname? = nil) -> CombineItem? {
         var item: CombineItem? = nil
-        let iden = diskKey(for: key, keyName: name)
-        if let iden {
-            item = itemCache.value(forKey: iden)
-            item?.key &= iden.service
-        }
-        if item == nil, let key {
-            item = itemCache.value(forKey: key)
-            item?.key &= key.service
-        }
+//        let iden = diskKey(for: key, keyName: name)
+//        if let iden {
+//            item = itemCache.value(forKey: iden)
+//            item?.key &= iden.service
+//        }
+//        if item == nil, let key {
+//            item = itemCache.value(forKey: key)
+//            item?.key &= key.service
+//        }
         return item
     }
 }

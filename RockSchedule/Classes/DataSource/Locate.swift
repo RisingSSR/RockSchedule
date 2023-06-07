@@ -13,61 +13,75 @@ public protocol Locatable: Hashable {
     var location: Int { get }
 }
 
-@objc public protocol AnyLocatableBox {
-    func hashx() -> Int
-}
-
 public class AnyLocatable: NSObject {
-    private let box: AnyLocatableBox
+    private let box: NSObject
     
     public init<T: Locatable>(_ value: T) {
         box = AnyLocatableBoxImpl(value)
     }
     
-    private class AnyLocatableBoxImpl<T: Locatable>: NSObject, AnyLocatableBox {
+    private func value<T: Locatable>() -> T? {
+        (box as? AnyLocatableBoxImpl<T>)?.value
+    }
+    
+    private class AnyLocatableBoxImpl<T: Locatable>: NSObject, Locatable {
         let value: T
         
         init(_ value: T) {
             self.value = value
         }
         
-        func hashx() -> Int {
-            return value.section.hashValue ^ value.week.hashValue ^ value.location.hashValue
+        override var hash: Int {
+            value.section.hashValue ^ value.week.hashValue ^ value.location.hashValue
         }
-    }
-    
-    public override var hash: Int {
-        return box.hashx()
-        let a = IndexSet()
-    }
-    
-    public static func == (lhs: AnyLocatable, rhs: AnyLocatable) -> Bool {
-        return lhs.box.hashx() == rhs.box.hashx()
+        
+        var section: Int { value.section }
+        
+        var week: Int { value.week }
+        
+        var location: Int { value.location }
     }
 }
 
 extension AnyLocatable: Locatable {
     public var section: Int {
-        if let locatable = box as? (any Locatable) {
-            return locatable.section
+        if let locate = (box as? (any Locatable)) {
+            return locate.section
         } else {
             fatalError("AnyLocatable does not contain a Locatable object")
         }
     }
     
     public var week: Int {
-        if let locatable = box as? (any Locatable) {
-            return locatable.week
+        if let locate = (box as? (any Locatable)) {
+            return locate.week
         } else {
             fatalError("AnyLocatable does not contain a Locatable object")
         }
     }
     
     public var location: Int {
-        if let locatable = box as? (any Locatable) {
-            return locatable.location
+        if let locate = (box as? (any Locatable)) {
+            return locate.location
+            
         } else {
             fatalError("AnyLocatable does not contain a Locatable object")
         }
+    }
+    
+    public override var description: String {
+        "\(section)-\(week)-\(location)"
+    }
+}
+
+public extension AnyLocatable {
+    private struct Point: Locatable {
+        let section: Int
+        let week: Int
+        let location: Int
+    }
+    
+    convenience init(section s: Int, week w: Int, location l: Int) {
+        self.init(Point(section: s, week: w, location: l))
     }
 }
