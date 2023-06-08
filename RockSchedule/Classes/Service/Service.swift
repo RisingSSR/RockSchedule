@@ -32,13 +32,13 @@ open class Service: NSObject, UICollectionViewDataSource, UICollectionViewDelega
     
     // MARK: UICollectionViewDataSource
     
-    public func numberOfSections(in collectionView: UICollectionView) -> Int {
+    open func numberOfSections(in collectionView: UICollectionView) -> Int {
         return max(map.final.count, 24)
     }
     
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if section >= map.final.count { return 0 }
-        return map.final[section].count ?? 0
+        return map.final[section].count 
     }
     
     open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -83,8 +83,42 @@ open class Service: NSObject, UICollectionViewDataSource, UICollectionViewDelega
         return AnyLocatable(section: indexPath.section, week: value.model.value.inDay, location: value.locates.lowerBound)
     }
     
-    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: CollectionViewLayout, lenthLocate locate: AnyLocatable, at indexPath: IndexPath) -> Int {
+    open func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: CollectionViewLayout, lenthLocate locate: AnyLocatable, at indexPath: IndexPath) -> Int {
         map.final[indexPath.section][indexPath.item].locates.count
+    }
+    
+    // MARK: UIScrollViewDelegate
+    
+    open func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        if let layout = (scrollView as? UICollectionView)?.collectionViewLayout as? CollectionViewLayout {
+            layout.pageCalculation = Int(scrollView.contentOffset.x / scrollView.bounds.width)
+            _scrollViewStartPosPoint = scrollView.contentOffset
+            _scrollDirection = 0
+        }
+    }
+    
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if _scrollDirection == 0 {
+            if abs(_scrollViewStartPosPoint.x - scrollView.contentOffset.x) < abs(_scrollViewStartPosPoint.y - scrollView.contentOffset.y) {
+                _scrollDirection = 1    // Vertical Scrolling
+            } else {
+                _scrollDirection = 2    // Horitonzal Scrolling
+            }
+        }
+        // Update scroll position of the scrollview according to detected direction.
+        if _scrollDirection == 1 {
+            scrollView.contentOffset = CGPoint(x: _scrollViewStartPosPoint.x, y: scrollView.contentOffset.y)
+        } else if _scrollDirection == 2 {
+            scrollView.contentOffset = CGPoint(x: scrollView.contentOffset.x, y: _scrollViewStartPosPoint.y)
+        }
+    }
+    
+    open func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if decelerate { _scrollDirection = 0 }
+    }
+    
+    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        _scrollDirection = 0
     }
     
     // MARK: TEST

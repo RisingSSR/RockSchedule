@@ -21,7 +21,6 @@ public extension FontName {
 }
 
 public extension UIFont {
-    
     class func fontName(_ fontName: FontName, size fontSize: CGFloat) -> UIFont {
         return UIFont(name: fontName, size: fontSize)!
     }

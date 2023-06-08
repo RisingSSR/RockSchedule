@@ -239,10 +239,10 @@ open class CollectionViewLayout: UICollectionViewLayout {
         let toY = (itemSize.height + lineSpacing) * toTime
         var index: Int = Int(proposedContentOffset.x / (collectionView?.bounds.width ?? 1) + 0.5)
         let remainder = proposedContentOffset.x - CGFloat(index) * (collectionView?.bounds.width ?? 0)
-        if velocity.x > 0.6 || (velocity.x > 0.3 && remainder > (collectionView?.bounds.width ?? 0) / 3) {
+        if velocity.x > 0.5 || (velocity.x > 0.3 && remainder > (collectionView?.bounds.width ?? 0) / 3) {
             index += 1
         }
-        if velocity.x < -0.6 || (velocity.x < -0.3 && remainder < (collectionView?.bounds.width ?? 0) / 3 * 2) {
+        if velocity.x < -0.5 || (velocity.x < -0.3 && remainder < (collectionView?.bounds.width ?? 0) / 3 * 2) {
             index -= 1
         }
         index = max(index, pageCalculation - 1)

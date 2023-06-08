@@ -40,7 +40,8 @@ public struct Request {
                 switch result {
                 case .success(let json):
                     let sno = json["stuNum"].stringValue
-                    let key = Key(sno: sno, type: .student)
+                    var key = Key(sno: sno, type: .student)
+                    key.setEXP(nowWeek: json["nowWeek"].intValue)
                     
                     var courseAry = [Course]()
                     for eachJson in json["data"].arrayValue {

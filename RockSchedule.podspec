@@ -49,7 +49,6 @@ Pod::Spec.new do |s|
   s.subspec 'VCTransitioningDelegate' do |vcTransitioningDelegate|
       vcTransitioningDelegate.source_files = 'RockSchedule/Classes/VCTransitioningDelegate/**/*.swift'
   end
-  
 
   
   # 正常的东西
@@ -109,6 +108,8 @@ Pod::Spec.new do |s|
   s.subspec 'Views' do |views|
       views.source_files = 'RockSchedule/Classes/Views/**/*.swift'
       views.resources = "RockSchedule/Assets/*.xcassets"
+#      views.dependency 'RockSchedule/RGenerated'
+      views.dependency 'R.swift'
   end
   
   # 布局

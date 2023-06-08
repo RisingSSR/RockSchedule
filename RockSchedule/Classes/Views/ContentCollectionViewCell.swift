@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RswiftResources
 
 open class ContentCollectionViewCell: UICollectionViewCell {
     public static let reuseIdentifier = "RockSchedule.ContentCollectionViewCell"
@@ -22,7 +23,8 @@ open class ContentCollectionViewCell: UICollectionViewCell {
         willSet {
             switch newValue {
             case .morning:
-                contentView.backgroundColor = #colorLiteral(red: 0.9764705882, green: 0.9058823529, blue: 0.8470588235, alpha: 1)
+                contentView.backgroundColor = R.color.backgroundAfternoon
+                let a = 2
                 titleLab.textColor = #colorLiteral(red: 1, green: 0.5019607843, blue: 0.08235294118, alpha: 1)
                 contentLab.textColor = #colorLiteral(red: 1, green: 0.5019607843, blue: 0.08235294118, alpha: 1)
                 multyView.backgroundColor = #colorLiteral(red: 1, green: 0.5019607843, blue: 0.08235294118, alpha: 1)
