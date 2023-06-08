@@ -9,10 +9,18 @@ import Foundation
 import WCDBSwift
 
 public struct Cache {
-    public enum Keyname: String {
-        case mine = "mine"
-        case reminder = "reminder"
-        case other = "other"
+    public enum Keyname: Int, Codable {
+        case mine = 0
+        case custom = 1
+        case others = 2
+        
+        var name: String {
+            switch self {
+            case .mine: return "mine"
+            case .custom: return "custom"
+            case .others: return "others"
+            }
+        }
     }
     
     public static let shared = Cache()
@@ -67,6 +75,16 @@ public struct Cache {
 //            item?.key &= key.service
 //        }
         return item
+    }
+}
+
+extension Cache.Keyname: Comparable {
+    public static func == (lhs: Cache.Keyname, rhs: Cache.Keyname) -> Bool {
+        lhs.rawValue == rhs.rawValue
+    }
+    
+    public static func < (lhs: Cache.Keyname, rhs: Cache.Keyname) -> Bool {
+        lhs.rawValue < rhs.rawValue
     }
 }
 

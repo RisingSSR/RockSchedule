@@ -44,6 +44,20 @@ public class AnyLocatable: NSObject {
 }
 
 extension AnyLocatable: Locatable {
+    
+    public override var hash: Int {
+        if let locate = (box as? (any Locatable)) {
+            return locate.section.hashValue ^ locate.week.hashValue ^ locate.location.hashValue
+        } else {
+            fatalError("AnyLocatable does not contain a Locatable object")
+        }
+    }
+    
+    public override func isEqual(_ object: Any?) -> Bool {
+        guard let other = object as? AnyLocatable else { return false }
+        return section == other.section && week == other.week && location == other.location
+    }
+    
     public var section: Int {
         if let locate = (box as? (any Locatable)) {
             return locate.section

@@ -49,12 +49,39 @@ open class ContentCollectionViewCell: UICollectionViewCell {
     
     public var title: String? {
         get { titleLab.text }
-        set { titleLab.text = newValue }
+        set {
+            titleLab.text = newValue
+            titleLab.sizeToFit()
+            titleLab.center.x = contentView.frame.width / 2
+        }
+    }
+    
+    public var content: String? {
+        get { contentLab.text }
+        set {
+            contentLab.text = newValue
+            contentLab.sizeToFit()
+            contentLab.center.x = contentView.frame.width / 2
+            contentLab.frame.origin.y = frame.height - contentLab.frame.height - 8
+        }
+    }
+    
+    public var isMulty: Bool {
+        set { multyView.isHidden = !newValue }
+        get { !multyView.isHidden}
+    }
+    
+    public var oneLenth: Bool {
+        set { contentLab.isHidden = newValue }
+        get { contentLab.isHidden }
     }
     
     public override init(frame: CGRect) {
         drawType = .morning
         super.init(frame: frame)
+        backgroundColor = .clear
+        contentView.layer.cornerRadius = 8
+        contentView.clipsToBounds = true
         contentView.addSubview(titleLab)
         contentView.addSubview(contentLab)
         contentView.addSubview(multyView)
@@ -67,12 +94,12 @@ open class ContentCollectionViewCell: UICollectionViewCell {
     open override func apply(_ layoutAttributes: UICollectionViewLayoutAttributes) {
         let frame = layoutAttributes.frame
         multyView.frame.origin.x = frame.width - multyView.frame.width - 5
-        titleLab.frame.size = titleLab.sizeThatFits(CGSize(width: contentView.frame.width - 16, height: .zero))
-        titleLab.center.y = contentView.frame.width / 2
+        
         titleLab.frame.origin.y = 8
-        contentLab.frame.size = titleLab.sizeThatFits(CGSize(width: contentView.frame.width - 16, height: .zero))
-        contentLab.center.y = contentView.frame.width / 2
+        titleLab.frame.size.width = contentView.frame.width - 2 * 8
+        
         contentLab.frame.origin.y = frame.height - contentLab.frame.height - 8
+        contentLab.frame.size.width = contentView.frame.width - 2 * 8
     }
     
     // MARK: lazy

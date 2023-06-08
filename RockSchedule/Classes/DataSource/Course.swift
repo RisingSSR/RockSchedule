@@ -149,13 +149,16 @@ extension Course: Hashable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.inDay == rhs.inDay
         && lhs.courseID == rhs.courseID
+        && lhs.inPeriods == rhs.inPeriods
         && lhs.course == rhs.course
         && lhs.classRoom == rhs.classRoom
     }
     
     public var hashValue: Int {
         (courseID?.hashValue ?? 0) << 2
-        + inDay.hashValue ^ course.hashValue ^ classRoom.hashValue
+        + inDay.hashValue ^ course.hashValue
+        ^ classRoom.hashValue ^ inPeriods.hashValue
+        
     }
     
     public func hash(into hasher: inout Hasher) {
@@ -163,6 +166,7 @@ extension Course: Hashable {
         hasher.combine(courseID)
         hasher.combine(course)
         hasher.combine(classRoom)
+        hasher.combine(inPeriods)
     }
 }
 

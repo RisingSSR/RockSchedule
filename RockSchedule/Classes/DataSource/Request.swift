@@ -59,19 +59,18 @@ public struct Request {
         }
     }
     
-    public static func request(attributes atrs: Set<Attribute>, response: @escaping (AFResult<[CombineItem]>) -> Void) {
+    public static func request(attributes atrs: Set<Attribute>, response: @escaping ([AFResult<CombineItem>]) -> Void) {
         let dispatchGroup = DispatchGroup()
-        var results = [CombineItem]()
+        var results = [AFResult<CombineItem>]()
         
         for attribute in atrs {
             dispatchGroup.enter()
             Request.request(attribute: attribute) { result in
                 switch result {
                 case .success(let item):
-                    results.append(item)
+                    results.append(.success(item))
                 case .failure(let error):
-                    response(.failure(error))
-                    return
+                    results.append(.failure(error))
                 }
                 dispatchGroup.leave()
             }
@@ -79,7 +78,7 @@ public struct Request {
         
         dispatchGroup.notify(queue: DispatchQueue.global(qos: .userInitiated)) {
             DispatchQueue.main.async {
-                response(.success(results))
+                response(results)
             }
         }
     }

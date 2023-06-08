@@ -125,6 +125,19 @@ open class CollectionViewLayout: UICollectionViewLayout {
         }
         let attributes = suplyCache[elementKind]![indexPath]!
         
+        remake(attributes: attributes)
+        
+        return attributes
+    }
+    
+    open override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
+        if itemCache[indexPath] == nil {
+            itemCache[indexPath] = UICollectionViewLayoutAttributes(forCellWith: indexPath)
+        }
+        let attributes = itemCache[indexPath]!
+        
+        remake(attributes: attributes)
+        
         return attributes
     }
     

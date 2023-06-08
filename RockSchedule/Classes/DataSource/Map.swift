@@ -11,22 +11,16 @@ import Foundation
 
 open class Map {
     
-    public enum Kind: Int, Codable {
-        case system = 0
-        case custom = 1
-        case others = 2
-    }
-    
     public struct Node: Codable {
         public let key: Key             // 个人信息
         public let value: Course        // 课程信息
-        public let kind: Kind           // 所属类型
+        public let kind: Cache.Keyname           // 所属类型
     }
     
     public var sno: String?
     
     public private(set) var pointMap: [AnyLocatable: LinkedList<Node>] = [:]
-    public private(set) var nodeMap: [Node: [IndexSet?]] = [:]
+    public private(set) var nodeMap: [Node: [IndexSet]] = [:]
     
     public init() { }
     
@@ -40,7 +34,9 @@ open class Map {
     
     open func insert(node newValue: Node, in locate: AnyLocatable) {
         if var list = pointMap[locate] {
-            nodeMap[newValue]?[locate.section]?.remove(locate.location)
+            if let oldValue = list.head {
+                nodeMap[oldValue]?[locate.section].remove(locate.location)
+            }
             let index = list.firstIndex { oldValue in
                 if newValue.kind < oldValue.kind { return true }
                 if newValue.kind == oldValue.kind {
@@ -57,39 +53,24 @@ open class Map {
         }
         
         if let node = pointMap[locate]?.first {
-            if nodeMap[node] == nil { nodeMap[node] = [] }
-            var ordered = nodeMap[node]!
-            while ordered.count <= locate.section {  ordered.append(nil) }
-            var final = ordered[locate.section] ?? IndexSet()
-            final.insert(locate.location)
-            ordered[locate.section] = final
+            var ordered = nodeMap[node] ?? []
+            while ordered.count <= locate.section { ordered.append(.init()) }
+            ordered[locate.section].insert(locate.location)
             nodeMap[node] = ordered
         }
     }
     
-    open func kind(of course: Course, with key: Key) -> Kind {
-        guard let sno else { return .system }
+    open func kind(of course: Course? = nil, with key: Key) -> Cache.Keyname {
+        guard let sno else { return .mine }
         if sno == key.sno {
             if key.type != .custom {
-                return .system
+                return .mine
             } else {
                 return .custom
             }
         } else {
             return .others
         }
-    }
-}
-
-// MARK: ex Map.Kind: Comparable
-
-extension Map.Kind: Comparable {
-    public static func == (lhs: Map.Kind, rhs: Map.Kind) -> Bool {
-        lhs.rawValue == rhs.rawValue
-    }
-    
-    public static func < (lhs: Map.Kind, rhs: Map.Kind) -> Bool {
-        lhs.rawValue < rhs.rawValue
     }
 }
 
