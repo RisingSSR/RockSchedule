@@ -19,30 +19,31 @@ open class ContentCollectionViewCell: UICollectionViewCell {
         case custom
     }
     
+    // MARK: Make View
+    
     public var drawType: DrawType {
         willSet {
             switch newValue {
             case .morning:
-                contentView.backgroundColor = R.color.backgroundAfternoon
-                let a = 2
-                titleLab.textColor = #colorLiteral(red: 1, green: 0.5019607843, blue: 0.08235294118, alpha: 1)
-                contentLab.textColor = #colorLiteral(red: 1, green: 0.5019607843, blue: 0.08235294118, alpha: 1)
-                multyView.backgroundColor = #colorLiteral(red: 1, green: 0.5019607843, blue: 0.08235294118, alpha: 1)
+                contentView.backgroundColor = UIColor(resource: R.color.scheduleContentBackgroundAfternoon)
+                titleLab.textColor = UIColor(resource: R.color.scheduleContentTextMorning)
+                contentLab.textColor = UIColor(resource: R.color.scheduleContentTextMorning)
+                multyView.backgroundColor = UIColor(resource: R.color.scheduleContentTextMorning)
             case .afternoon:
-                contentView.backgroundColor = #colorLiteral(red: 0.9764705882, green: 0.8901960784, blue: 0.8941176471, alpha: 1)
-                titleLab.textColor = #colorLiteral(red: 1, green: 0.3843137255, blue: 0.3843137255, alpha: 1)
-                contentLab.textColor = #colorLiteral(red: 1, green: 0.3843137255, blue: 0.3843137255, alpha: 1)
-                multyView.backgroundColor = #colorLiteral(red: 1, green: 0.3843137255, blue: 0.3843137255, alpha: 1)
+                contentView.backgroundColor = UIColor(resource: R.color.scheduleContentBackgroundAfternoon)
+                titleLab.textColor = UIColor(resource: R.color.scheduleContentTextAfternoon)
+                contentLab.textColor = UIColor(resource: R.color.scheduleContentTextAfternoon)
+                multyView.backgroundColor = UIColor(resource: R.color.scheduleContentTextAfternoon)
             case .night:
-                contentView.backgroundColor = #colorLiteral(red: 0.8666666667, green: 0.8901960784, blue: 0.9725490196, alpha: 1)
-                titleLab.textColor = #colorLiteral(red: 0.2509803922, green: 0.4, blue: 0.9176470588, alpha: 1)
-                contentLab.textColor = #colorLiteral(red: 0.2509803922, green: 0.4, blue: 0.9176470588, alpha: 1)
-                multyView.backgroundColor = #colorLiteral(red: 0.2509803922, green: 0.4, blue: 0.9176470588, alpha: 1)
+                contentView.backgroundColor = UIColor(resource: R.color.scheduleContentBackgroundNight)
+                titleLab.textColor = UIColor(resource: R.color.scheduleContentTextNight)
+                contentLab.textColor = UIColor(resource: R.color.scheduleContentTextNight)
+                multyView.backgroundColor = UIColor(resource: R.color.scheduleContentTextNight)
             case .others:
-                contentView.backgroundColor = #colorLiteral(red: 0.8745098039, green: 0.9529411765, blue: 0.9882352941, alpha: 1)
-                titleLab.textColor = #colorLiteral(red: 0.02352941176, green: 0.6392156863, blue: 0.9882352941, alpha: 1)
-                contentLab.textColor = #colorLiteral(red: 0.02352941176, green: 0.6392156863, blue: 0.9882352941, alpha: 1)
-                multyView.backgroundColor = #colorLiteral(red: 0.02352941176, green: 0.6392156863, blue: 0.9882352941, alpha: 1)
+                contentView.backgroundColor = UIColor(resource: R.color.scheduleContentBackgroundOther)
+                titleLab.textColor = UIColor(resource: R.color.scheduleContentTextOther)
+                contentLab.textColor = UIColor(resource: R.color.scheduleContentTextOther)
+                multyView.backgroundColor = UIColor(resource: R.color.scheduleContentTextOther)
             case .custom:
                 break
             }
@@ -77,6 +78,8 @@ open class ContentCollectionViewCell: UICollectionViewCell {
         set { contentLab.isHidden = newValue }
         get { contentLab.isHidden }
     }
+    
+    // MARK: init
     
     public override init(frame: CGRect) {
         drawType = .morning

@@ -7,12 +7,22 @@
 
 import UIKit
 
-open class DoubleMap: Map {
-    public private(set) var keys: [Cache.Keyname: CombineItem]
+open class FinalMap: Map {
+    
+    public enum KeyFetal {
+        case double
+        case group
+    }
+    
+    public private(set) var keys: [AnyHashable: CombineItem]
     public private(set) var sections: Int
+    
+    public private(set) var startDate: Date?
     
     public var useImmediate: Bool = false
     private var finalRange: [[(model: Map.Node, locates: IndexSet.RangeView.Element)]]
+    
+    public let keyFetal: KeyFetal
     
     public var final: [[(model: Map.Node, locates: IndexSet.RangeView.Element)]]{
         if useImmediate { return finalRange }
@@ -32,17 +42,30 @@ open class DoubleMap: Map {
         return finalRange
     }
     
-    public override init() {
-        keys = [:]
-        finalRange = []
+    // MARK: M
+    
+    public init(keyFetal: KeyFetal) {
+        self.keyFetal = keyFetal
+        switch keyFetal {
+        case .double: keys = [Cache.Keyname: CombineItem]()
+        case .group: keys = [Key: CombineItem]()
+        }
+        finalRange = [[]]
         sections = 0
         super.init()
     }
     
     open func insert(item: CombineItem) {
-        let kind = kind(with: item.key)
-        keys[kind] = item
+        switch keyFetal {
+        case .double:
+            let kind = kind(with: item.key)
+            keys[kind] = item
+        case .group:
+            let key = item.key
+            keys[key] = item
+        }
         
+        if item.key.type != .custom { startDate = item.key.start }
         for value in item.values {
             insert(course: value, with: item.key)
             sections = max(sections, value.inSections.last ?? sections)
@@ -53,5 +76,4 @@ open class DoubleMap: Map {
         useImmediate = false
         super.insert(node: newValue, in: locate)
     }
-    
 }

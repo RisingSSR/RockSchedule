@@ -132,23 +132,11 @@ extension TimeLine.Layout: Comparable {
 
 public extension Course {
     
-    /// 转为时间线
-    var layout: [TimeLine.Layout] {
-        var layout = [TimeLine.Layout]()
-        for idx in inPeriods {
-            if Course.normalTime.contains(idx) {
-                layout.append(.normal(idx))
-            } else if let special = SpecialTime(rawValue: idx) {
-                layout.append(.special(special))
-            }
-        }
-        return layout.sorted(by: <)
-    }
-    
     /// 时间 \e.g. "14:00 - 17:55"
     var timeStr: String {
-        let layout = layout
-        guard let fist = layout.first, let last = layout.last else { return "" }
-        return "\(TimeLine[fist].fromDescription) - \(TimeLine[last].toDescription)"
+//        let layout = layout
+//        guard let fist = layout.first, let last = layout.last else { return "" }
+//        return "\(TimeLine[fist].fromDescription) - \(TimeLine[last].toDescription)"
+        ""
     }
 }

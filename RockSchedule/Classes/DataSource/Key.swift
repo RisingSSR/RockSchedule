@@ -43,16 +43,15 @@ public struct Key: Codable {
     public let sno: String
     public let type: Kind
     
-    public private(set) var exp: TimeInterval
-    public var iat: Date
+    public private(set) var start: Date?
+    public var recentRequest: Date
     
     public var service: Service
     
     public init(sno: String, type: Kind) {
         self.sno = sno
         self.type = type
-        exp = 0
-        iat = Date()
+        recentRequest = Date()
         service = []
     }
     
@@ -61,20 +60,11 @@ public struct Key: Codable {
         guard let openingWeek = calendar.date(byAdding: .weekOfYear, value: -nowWeek, to: Date()) else { return }
         var components = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear, .weekday], from: openingWeek)
         components.weekday = 3
-        guard let day = calendar.date(from: components) else { return }
-        exp = day.timeIntervalSince1970
-    }
-}
-
-// MARK: ex Key
-public extension Key {
-    
-    static func &= (lhs: inout Key, rhs: Key.Service) {
-        lhs.service = lhs.service.union(rhs)
+        start = calendar.date(from: components)
     }
     
-    static func |= (lhs: inout Key, rhs: Key.Service) {
-        lhs.service = lhs.service.intersection(rhs)
+    public mutating func union(service: Key.Service) {
+        self.service = service.union(service)
     }
 }
 
@@ -110,9 +100,30 @@ extension Key: TableCodable {
         case sno
         case type
         
-        case exp
-        case iat
+        case start
+        case recentRequest
        
         case service
+    }
+}
+
+// MARK: CombineItem
+
+public class CombineItem {
+    
+    public let key: Key
+    public private(set) var values: [Course]
+    
+    public init(key: Key, values: [Course] = []) {
+        self.key = key
+        self.values = values
+    }
+}
+
+// MARK: ex CombineItem: CustomDebugStringConvertible
+
+extension CombineItem: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        "\(key.debugDescription) - \(values.count)"
     }
 }

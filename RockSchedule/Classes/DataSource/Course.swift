@@ -16,18 +16,9 @@ public struct Course: Codable {
     static let normalTime = 1...12
     
     /// 特殊时间
-    public enum SpecialTime: Int, Codable, CaseIterable {
-        
+    public enum SpecialTime: Codable, CaseIterable {
         case noon   /// 中午
-        
         case night  /// 晚上
-        
-        public var rawValue: Int {
-            switch self {
-            case .noon: return 1 << 4
-            case .night: return 1 << 5
-            }
-        }
         
         public var trueValue: CGFloat {
             switch self {
@@ -48,8 +39,12 @@ public struct Course: Codable {
     public var inDay: Int
     /// [1..] 对应1到n周，若需要整学期，请自行判断
     public var inSections: IndexSet
-    /// [1...12], [1 << 5], [1 << 6 ]  对应1到12节，中午，晚上
-    public var inPeriods: IndexSet
+    /// [1...12],  对应1到12节
+    public var inPeriod: Range<Int>
+    /// 中午，晚上
+    public var inSpecial: Set<SpecialTime>
+    
+    public var periodCount: Int { inPeriod.count + inSpecial.count }
 
     /// 标题（什么课）
     public var course: String
@@ -76,13 +71,15 @@ public struct Course: Codable {
     }
     
     /// 通用的创建方法
-    public init(inDay: Int, inSections: IndexSet, inPeriods: IndexSet,
+    public init(inDay: Int, inSections: IndexSet,
+                inRange: Range<Int>, inSpecial: Set<SpecialTime>,
                 course: String, classRoom: String,
                 type: String = "事务", courseID: String? = nil, teacher: String = "自定义",
                 rawWeek: String? = nil, lesson: String? = nil) {
         self.inDay = inDay
         self.inSections = inSections
-        self.inPeriods = inPeriods
+        self.inPeriod = inRange
+        self.inSpecial = inSpecial
         
         self.course = course
         self.classRoom = classRoom
@@ -104,7 +101,7 @@ public extension Course {
         let inSections = IndexSet(json["week"].arrayObject as! [Int])
         let location = json["begin_lesson"].intValue
         let lenth = json["period"].intValue
-        let inPeriods = IndexSet(location..<location + lenth)
+        let inPeriods = location..<location + lenth
         
         let course = json["course"].stringValue
         let classRoom = json["classroom"].stringValue
@@ -114,7 +111,7 @@ public extension Course {
         
         let rawWeek = json["rawWeek"].string
         let lesson = json["lesson"].string
-        self.init(inDay: inDay, inSections: inSections, inPeriods: inPeriods,
+        self.init(inDay: inDay, inSections: inSections, inRange: inPeriods, inSpecial: [],
                   course: course, classRoom: classRoom, type: type, courseID: courseID,
                   teacher: teacher, rawWeek: rawWeek, lesson: lesson)
     }
@@ -123,21 +120,17 @@ public extension Course {
         return Course(fromJSON: json)
     }
     
-    static func custom(inDay: Int, inSections: IndexSet, inPeriods: IndexSet,
+    static func custom(inDay: Int, inSections: IndexSet,
+                       inPeriod: Range<Int>, inSpecial: Set<SpecialTime> = [],
                        course: String, classRoom: String) -> Course {
         let courseID = "custom\(Date().timeIntervalSince1970)"
         let rawWeek = inSections.rangeView.map { range in
             range.count == 1 ? "\(range.lowerBound)" : "\(range.lowerBound)-\(range.upperBound - 1)"
         }.joined(separator: ", ") + "周"
         
-        let lesson = inPeriods.rangeView.compactMap { range in
-            if range.lowerBound >= normalTime.lowerBound && range.upperBound <= normalTime.upperBound + 1 {
-                return "\(range.lowerBound)-\(range.upperBound - 1)节"
-            }
-            return SpecialTime(rawValue: range.lowerBound)?.description
-        }.joined(separator: ", ")
-        
-        return Course(inDay: inDay, inSections: inSections, inPeriods: inPeriods,
+        let lesson = inSpecial.map({ $0.description }).joined(separator: ", ") + "\(inPeriod.lowerBound)-\(inPeriod.upperBound - 1)节"
+        return Course(inDay: inDay, inSections: inSections,
+                      inRange: inPeriod, inSpecial: inSpecial,
                       course: course, classRoom: classRoom,
                       courseID: courseID, rawWeek: rawWeek, lesson: lesson)
     }
@@ -146,10 +139,11 @@ public extension Course {
 // MARK: ex Hashable
 
 extension Course: Hashable {
-    public static func == (lhs: Self, rhs: Self) -> Bool {
+    public static func == (lhs: Course, rhs: Course) -> Bool {
         lhs.inDay == rhs.inDay
         && lhs.courseID == rhs.courseID
-        && lhs.inPeriods == rhs.inPeriods
+        && lhs.inPeriod == rhs.inPeriod
+        && lhs.inSpecial == rhs.inSpecial
         && lhs.course == rhs.course
         && lhs.classRoom == rhs.classRoom
     }
@@ -157,7 +151,7 @@ extension Course: Hashable {
     public var hashValue: Int {
         (courseID?.hashValue ?? 0) << 2
         + inDay.hashValue ^ course.hashValue
-        ^ classRoom.hashValue ^ inPeriods.hashValue
+        ^ classRoom.hashValue ^ inPeriod.hashValue ^ inSpecial.hashValue
         
     }
     
@@ -166,7 +160,8 @@ extension Course: Hashable {
         hasher.combine(courseID)
         hasher.combine(course)
         hasher.combine(classRoom)
-        hasher.combine(inPeriods)
+        hasher.combine(inPeriod)
+        hasher.combine(inSpecial)
     }
 }
 
@@ -186,7 +181,8 @@ extension Course: TableCodable {
         
         case inDay
         case inSections
-        case inPeriods
+        case inPeriod
+        case inSpecial
         
         case course
         case classRoom

@@ -50,6 +50,18 @@ Pod::Spec.new do |s|
       vcTransitioningDelegate.source_files = 'RockSchedule/Classes/VCTransitioningDelegate/**/*.swift'
   end
 
+  # R.swift
+  s.subspec 'RSwift' do |rSwift|
+      rSwift.dependency 'R.swift'
+      rSwift.script_phases = [{
+          :name => 'R',
+          :script => '"$PODS_ROOT/R.swift/rswift" generate "$SRCROOT/../RockSchedule/Classes/R.generated.swift"',
+          :execution_position => :before_compile,
+          :input_files => ["$TEMP_DIR/rswift-lastrun"],
+          :output_files => ["$SRCROOT/../RockSchedule/Classes/R.generated.swift"]
+      }]
+  end
+  
   
   # 正常的东西
   
@@ -98,8 +110,9 @@ Pod::Spec.new do |s|
   # 数据处理
   s.subspec 'Solve' do |solve|
       solve.source_files =
+        'RockSchedule/Classes/DataSource/TimeLine.swift',
         'RockSchedule/Classes/DataSource/Map.swift',
-        'RockSchedule/Classes/DataSource/DoubleMap.swift'
+        'RockSchedule/Classes/DataSource/FinalMap.swift'
       solve.dependency 'RockSchedule/LinkedList'
       solve.dependency 'RockSchedule/CacheData'
   end
@@ -108,8 +121,7 @@ Pod::Spec.new do |s|
   s.subspec 'Views' do |views|
       views.source_files = 'RockSchedule/Classes/Views/**/*.swift'
       views.resources = "RockSchedule/Assets/*.xcassets"
-#      views.dependency 'RockSchedule/RGenerated'
-      views.dependency 'R.swift'
+      views.dependency 'RockSchedule/RSwift'
   end
   
   # 布局

@@ -57,14 +57,14 @@ open class CollectionViewLayout: UICollectionViewLayout {
     public private(set) var itemSize: CGSize
     
     public private(set) var itemCache: [IndexPath: UICollectionViewLayoutAttributes]
-    public private(set) var suplyCache: [String: [IndexPath: UICollectionViewLayoutAttributes]]
+    public private(set) var supplyCache: [String: [IndexPath: UICollectionViewLayoutAttributes]]
     public private(set) var sections: Int
     
     private var numberOfTimeLine: Int?
     
     override public init() {
         itemCache = [:]
-        suplyCache = [
+            supplyCache = [
             UICollectionView.header: [:],
             UICollectionView.leading: [:],
             UICollectionView.placehoder: [:],
@@ -92,7 +92,7 @@ open class CollectionViewLayout: UICollectionViewLayout {
         numberOfTimeLine = 0
         
         for s in max(pageCalculation - 1, 0)...min(pageCalculation + numberOfPages, sections) {
-            for (kind, _) in suplyCache {
+            for (kind, _) in supplyCache {
                 numberOfTimeLine = dataSource?.collectionView?(collectionView!, numberOfSupplementaryOf: kind, in: s)
                 let suplyCount = numberOfTimeLine ?? 0
                 for i in 0..<suplyCount {
@@ -119,11 +119,11 @@ open class CollectionViewLayout: UICollectionViewLayout {
     }
     
     open override func layoutAttributesForSupplementaryView(ofKind elementKind: String, at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
-        if suplyCache[elementKind] == nil { suplyCache[elementKind] = [:] }
-        if suplyCache[elementKind]![indexPath] == nil {
-            suplyCache[elementKind]![indexPath] = UICollectionViewLayoutAttributes(forSupplementaryViewOfKind: elementKind, with: indexPath)
+        if supplyCache[elementKind] == nil { supplyCache[elementKind] = [:] }
+        if supplyCache[elementKind]![indexPath] == nil {
+            supplyCache[elementKind]![indexPath] = UICollectionViewLayoutAttributes(forSupplementaryViewOfKind: elementKind, with: indexPath)
         }
-        let attributes = suplyCache[elementKind]![indexPath]!
+        let attributes = supplyCache[elementKind]![indexPath]!
         
         remake(attributes: attributes)
         
@@ -255,21 +255,21 @@ open class CollectionViewLayout: UICollectionViewLayout {
         super.invalidateLayout(with: context)
         if context.invalidateDataSourceCounts {
             sections = collectionView?.dataSource?.numberOfSections?(in: collectionView!) ?? collectionView?.numberOfSections ?? 0
-            for (k, _) in suplyCache { suplyCache[k]!.removeAll() }
+            for (k, _) in         supplyCache {         supplyCache[k]!.removeAll() }
         }
         
         if let context = context as? InvalidationContext {
             if context.header {
-                suplyCache[UICollectionView.header]?.forEach({ remake(attributes: $0.value) })
+                supplyCache[UICollectionView.header]?.forEach({ remake(attributes: $0.value) })
             }
             if context.pointer {
-                suplyCache[UICollectionView.pointer]?.forEach({ remake(attributes: $0.value) })
+                supplyCache[UICollectionView.pointer]?.forEach({ remake(attributes: $0.value) })
             }
             if context.placehoder {
-                suplyCache[UICollectionView.placehoder]?.forEach({ remake(attributes: $0.value) })
+                supplyCache[UICollectionView.placehoder]?.forEach({ remake(attributes: $0.value) })
             }
             if context.leading {
-                suplyCache[UICollectionView.leading]?.forEach({ remake(attributes: $0.value) })
+                supplyCache[UICollectionView.leading]?.forEach({ remake(attributes: $0.value) })
             }
         }
     }

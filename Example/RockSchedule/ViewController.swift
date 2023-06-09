@@ -11,7 +11,7 @@ import RockSchedule
 
 class ViewController: UIViewController {
     
-    let service = Service()
+    let service = DataSourceService()
 
     override func viewDidLoad() {
         super.viewDidLoad()

@@ -27,9 +27,34 @@ open class Map {
     open func insert(course: Course, with key: Key) {
         let kind = self.kind(of: course, with: key)
         let node = Node(key: key, value: course, kind: kind)
+        
+        for section in 0...(course.inSections.last ?? 0) {
+            if section == 0 || course.inSections.contains(section) {
+                
+            }
+        }
+        
+        
         for locate in course.locates {
             insert(node: node, in: locate)
         }
+    }
+    
+    open func sepcials(section: Int) -> Set<Course.SpecialTime> { [] }
+    
+    open func locates(of course: Course, with specials: Set<Course.SpecialTime>) -> [AnyLocatable] {
+        var locates = [AnyLocatable]()
+        
+        for period in course.inPeriod {
+            for section in course.inSections {
+                locates.append(AnyLocatable(section: section, week: course.inDay, location: period))
+            }
+            locates.append(AnyLocatable(section: 0, week: course.inDay, location: period))
+        }
+        
+        
+        
+        return locates
     }
     
     open func insert(node newValue: Node, in locate: AnyLocatable) {
@@ -40,7 +65,7 @@ open class Map {
             let index = list.firstIndex { oldValue in
                 if newValue.kind < oldValue.kind { return true }
                 if newValue.kind == oldValue.kind {
-                    if newValue.value.inPeriods.count >= oldValue.value.inPeriods.count {
+                    if newValue.value.periodCount >= oldValue.value.periodCount {
                         return true
                     }
                 }
@@ -104,7 +129,7 @@ extension Course {
     
     public var locates: [AnyLocatable] {
         var locate = [AnyLocatable]()
-        for period in inPeriods {
+        for period in inPeriod {
             for section in inSections {
                 locate.append(AnyLocatable(section: section, week: inDay, location: period))
             }

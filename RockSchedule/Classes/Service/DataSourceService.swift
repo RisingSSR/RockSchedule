@@ -1,5 +1,5 @@
 //
-//  Service.swift
+//  DataSourceService.swift
 //  RockSchedule
 //
 //  Created by SSR on 2023/6/2.
@@ -7,9 +7,9 @@
 
 import UIKit
  
-open class Service: NSObject, UICollectionViewDataSource, UICollectionViewDelegate, CollectionViewLayoutDataSource {
+open class DataSourceService: NSObject, UICollectionViewDataSource, UICollectionViewDelegate, CollectionViewLayoutDataSource {
     
-    public private(set) var map = DoubleMap()
+    public private(set) var map = FinalMap(keyFetal: .double)
     private var _scrollViewStartPosPoint: CGPoint = .zero
     private var _scrollDirection: Int = 0
     

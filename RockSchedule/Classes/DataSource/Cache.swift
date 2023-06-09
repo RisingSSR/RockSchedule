@@ -48,7 +48,7 @@ public struct Cache {
         var iden: Key?
         if let name {
             iden = keyMapTable[name]
-            if let key { iden? &= key.service }
+//            if let key { iden? &= key.service }
         }
         if iden == nil, let key {
             iden = keyCache.first { $0 == key }
