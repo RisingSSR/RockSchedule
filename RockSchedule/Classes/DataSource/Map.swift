@@ -27,34 +27,9 @@ open class Map {
     open func insert(course: Course, with key: Key) {
         let kind = self.kind(of: course, with: key)
         let node = Node(key: key, value: course, kind: kind)
-        
-        for section in 0...(course.inSections.last ?? 0) {
-            if section == 0 || course.inSections.contains(section) {
-                
-            }
-        }
-        
-        
         for locate in course.locates {
             insert(node: node, in: locate)
         }
-    }
-    
-    open func sepcials(section: Int) -> Set<Course.SpecialTime> { [] }
-    
-    open func locates(of course: Course, with specials: Set<Course.SpecialTime>) -> [AnyLocatable] {
-        var locates = [AnyLocatable]()
-        
-        for period in course.inPeriod {
-            for section in course.inSections {
-                locates.append(AnyLocatable(section: section, week: course.inDay, location: period))
-            }
-            locates.append(AnyLocatable(section: 0, week: course.inDay, location: period))
-        }
-        
-        
-        
-        return locates
     }
     
     open func insert(node newValue: Node, in locate: AnyLocatable) {
@@ -129,11 +104,20 @@ extension Course {
     
     public var locates: [AnyLocatable] {
         var locate = [AnyLocatable]()
-        for period in inPeriod {
+        for var period in inPeriod {
+            if period >= 9 { period += 1 }
+            if period >= 5 { period += 1 }
             for section in inSections {
                 locate.append(AnyLocatable(section: section, week: inDay, location: period))
             }
             locate.append(AnyLocatable(section: 0, week: inDay, location: period))
+        }
+        
+        for special in inSpecial {
+            for section in inSections {
+                locate.append(AnyLocatable(section: section, week: inDay, location: special.rawValue))
+            }
+            locate.append(AnyLocatable(section: 0, week: inDay, location: special.rawValue))
         }
         return locate
     }

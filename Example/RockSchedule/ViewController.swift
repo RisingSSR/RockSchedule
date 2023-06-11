@@ -31,7 +31,6 @@ class ViewController: UIViewController {
         cview.showsHorizontalScrollIndicator = false
         cview.showsVerticalScrollIndicator = false
         cview.decelerationRate = 0.998
-        cview.backgroundColor = .red
         return cview
     }()
 

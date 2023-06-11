@@ -27,7 +27,6 @@ class SupplyCollectionViewCell: UICollectionViewCell {
         case .content(let str):
             titleLab.frame.origin.y = 6
             contentLab.text = str
-            contentLab.sizeToFit()
             contentLab.frame.origin.y = contentView.frame.size.height - contentLab.frame.height - 3
             contentLab.isHidden = false
         }
@@ -85,7 +84,7 @@ class SupplyCollectionViewCell: UICollectionViewCell {
     
     public private(set) var contentLab: UILabel = {
         let lab = UILabel()
-        lab.frame.size.height = 20
+        lab.frame.size.height = 24.5
         lab.backgroundColor = .clear
         lab.textAlignment = .center
         lab.font = UIFont.fontName(.PingFangSC.regular, size: 11)

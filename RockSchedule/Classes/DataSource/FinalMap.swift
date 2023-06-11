@@ -14,31 +14,50 @@ open class FinalMap: Map {
         case group
     }
     
+    public struct SectionModel {
+        public struct ItemModel {
+            public let model: Map.Node
+            public let locates: IndexSet.RangeView.Element
+        }
+        public var startDate: Date?
+        public var specialTime: Set<Course.SpecialTime> = []
+        public var values: [ItemModel] = []
+    }
+    
     public private(set) var keys: [AnyHashable: CombineItem]
     public private(set) var sections: Int
-    
+    public private(set) var nowWeek: Int
     public private(set) var startDate: Date?
     
     public var useImmediate: Bool = false
-    private var finalRange: [[(model: Map.Node, locates: IndexSet.RangeView.Element)]]
+    private var finalRange: [SectionModel]
     
     public let keyFetal: KeyFetal
     
-    public var final: [[(model: Map.Node, locates: IndexSet.RangeView.Element)]]{
+    public var final: [SectionModel]{
         if useImmediate { return finalRange }
         useImmediate = true
+        sections = 0
         finalRange.removeAll(keepingCapacity: true)
         
         for nodeEntry in nodeMap {
-            while finalRange.count <= nodeEntry.value.count { finalRange.append([]) }
+            sections = max(sections, nodeEntry.value.count)
+            while finalRange.count <= sections { finalRange.append(SectionModel()) }
             for index in 0..<nodeEntry.value.count {
                 var final = finalRange[index]
                 for rangeView in nodeEntry.value[index].rangeView {
-                    final.append((nodeEntry.key, rangeView))
+                    let itemModel = SectionModel.ItemModel(model: nodeEntry.key, locates: rangeView)
+                    final.values.append(itemModel)
                 }
                 finalRange[index] = final
             }
         }
+        if sections >= 1 {
+            for i in 1...sections {
+                finalRange[i].startDate = startDate?.add(.weekOfYear, value: i - 1)
+            }
+        }
+        
         return finalRange
     }
     
@@ -50,8 +69,9 @@ open class FinalMap: Map {
         case .double: keys = [Cache.Keyname: CombineItem]()
         case .group: keys = [Key: CombineItem]()
         }
-        finalRange = [[]]
+        finalRange = [SectionModel()] // for section 0
         sections = 0
+        nowWeek = 0
         super.init()
     }
     
@@ -65,10 +85,12 @@ open class FinalMap: Map {
             keys[key] = item
         }
         
-        if item.key.type != .custom { startDate = item.key.start }
         for value in item.values {
             insert(course: value, with: item.key)
-            sections = max(sections, value.inSections.last ?? sections)
+        }
+        if item.key.type != .custom {
+            startDate = item.key.start
+            nowWeek = Calendar(identifier: .gregorian).dateComponents([.weekOfYear], from: startDate ?? Date(), to: Date()).weekOfYear ?? 0
         }
     }
     

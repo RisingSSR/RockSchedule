@@ -1285,8 +1285,8 @@
 		7F0600B2D130ABB2B8CFAA405BC86BB6 /* Service */ = {
 			isa = PBXGroup;
 			children = (
-				C44998714EA12CAB0554BCE21245114F /* DataSourceService.swift */,
 				CBC2E728B0571AC59C3791AE4AA5A2C3 /* InteractiveService.swift */,
+				C44998714EA12CAB0554BCE21245114F /* DataSourceService.swift */,
 			);
 			name = Service;
 			sourceTree = "<group>";

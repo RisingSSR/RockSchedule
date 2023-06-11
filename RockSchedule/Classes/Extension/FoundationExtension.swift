@@ -8,8 +8,8 @@
 import Foundation
 
 public extension Locale {
-    static var CQ: Self {
-        Locale(identifier: "Asia/Chongqing")
+    static var zh_CN: Self {
+        Locale(identifier: "zh_CN")
     }
 }
 
@@ -28,7 +28,11 @@ public extension DateComponents {
 
 public extension Date {
     func reset(_ component: Calendar.Component, value: Int) -> Date? {
-        Calendar(identifier: .republicOfChina).date(bySetting: component, value: value, of: self)
+        Calendar(identifier: .gregorian).date(bySetting: component, value: value, of: self)
+    }
+    
+    func add(_ component: Calendar.Component, value: Int) -> Date? {
+        Calendar(identifier: .gregorian).date(byAdding: component, value: value, to: self)
     }
     
     func string(withFormat format: String, locale: Locale? = nil, timeZone: TimeZone? = nil) -> String {

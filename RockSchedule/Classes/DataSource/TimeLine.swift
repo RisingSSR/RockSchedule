@@ -56,15 +56,35 @@ public struct TimeLine: Codable {
         }
     }
     
-    public var special: Set<Course.SpecialTime>
+    // MARK: property
     
-    public var count: Int {
-        return 12 + special.count
+    public var special: Set<Course.SpecialTime> {
+        didSet {
+            if oldValue == special { return }
+            layouts.removeAll {
+                guard case let .special(str) = $0 else { return false }
+                return Course.SpecialTime.allCases.contains(str)
+            }
+            if special.contains(.night) {
+                layouts.insert(.special(.night), at: 8)
+            }
+            if special.contains(.noon) {
+                layouts.insert(.special(.noon), at: 4)
+            }
+        }
     }
     
-    public init(special: Set<Course.SpecialTime> = []) {
-        self.special = special
-    }
+    public var count: Int { 12 + special.count }
+    
+    public private(set) lazy var layouts: [Layout] = {
+        var layouts = [Layout]()
+        for i in 1...12 {
+            layouts.append(.normal(i))
+        }
+        return layouts
+    }()
+    
+    // MARK: static
     
     public static subscript(layout: Layout) -> Part {
         switch layout {
@@ -109,22 +129,16 @@ public struct TimeLine: Codable {
 
 extension TimeLine.Layout: Comparable {
     public static func < (lhs: TimeLine.Layout, rhs: TimeLine.Layout) -> Bool {
-        switch lhs {
-        case .normal(let lint):
-            switch rhs {
-            case .normal(let rint):
-                return lint < rint
-            case .special(let rspecialTime):
-                return CGFloat(lint) < rspecialTime.trueValue
-            }
-        case .special(let lspecialTime):
-            switch rhs {
-            case .normal(let rint):
-                return lspecialTime.trueValue < CGFloat(rint)
-            case .special(let rspecialTime):
-                return lspecialTime.trueValue <  rspecialTime.trueValue
-            }
-        } 
+        switch (lhs, rhs) {
+        case (.normal(let lval), .normal(let rval)):
+            return lval < rval
+        case (.normal(let lval), .special(let rval)):
+            return CGFloat(lval) < rval.trueValue
+        case (.special(let lval), .normal(let rval)):
+            return lval.trueValue < CGFloat(rval)
+        case (.special(let lval), .special(let rval)):
+            return lval.trueValue < rval.trueValue
+        }
     }
 }
 
@@ -134,9 +148,14 @@ public extension Course {
     
     /// 时间 \e.g. "14:00 - 17:55"
     var timeStr: String {
-//        let layout = layout
-//        guard let fist = layout.first, let last = layout.last else { return "" }
-//        return "\(TimeLine[fist].fromDescription) - \(TimeLine[last].toDescription)"
-        ""
+        var minLayout: TimeLine.Layout = .normal(inPeriod.lowerBound)
+        var maxLayout: TimeLine.Layout = .normal(inPeriod.upperBound - 1)
+        if inSpecial.count > 0 {
+            let minSpecial = inSpecial.min { $0.trueValue < $1.trueValue }!
+            let maxSpecial = inSpecial.max { $0.trueValue > $1.trueValue }!
+            minLayout = min(minLayout, .special(minSpecial))
+            maxLayout = max(maxLayout, .special(maxSpecial))
+        }
+        return "\(TimeLine[minLayout].fromDescription) - \(TimeLine[maxLayout].toDescription)"
     }
 }

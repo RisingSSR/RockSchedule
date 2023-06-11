@@ -55,11 +55,12 @@ public struct Key: Codable {
         service = []
     }
     
-    public mutating func setEXP(nowWeek: Int) {
-        let calendar = Calendar(identifier: .republicOfChina)
-        guard let openingWeek = calendar.date(byAdding: .weekOfYear, value: -nowWeek, to: Date()) else { return }
+    public mutating func setEXP(nowWeek n: Int) {
+        let calendar = Calendar(identifier: .gregorian)
+        guard let startOfWeek = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear, .weekday], from: Date())) else { return }
+        guard let openingWeek = calendar.date(byAdding: .weekOfYear, value: -n, to: startOfWeek) else { return }
         var components = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear, .weekday], from: openingWeek)
-        components.weekday = 3
+        components.weekday = 2
         start = calendar.date(from: components)
     }
     

@@ -16,9 +16,9 @@ public struct Course: Codable {
     static let normalTime = 1...12
     
     /// 特殊时间
-    public enum SpecialTime: Codable, CaseIterable {
-        case noon   /// 中午
-        case night  /// 晚上
+    public enum SpecialTime: Int, Codable, CaseIterable {
+        case noon = 5   /// 中午
+        case night = 10  /// 晚上
         
         public var trueValue: CGFloat {
             switch self {

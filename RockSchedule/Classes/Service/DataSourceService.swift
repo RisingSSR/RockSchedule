@@ -26,7 +26,9 @@ open class DataSourceService: NSObject, UICollectionViewDataSource, UICollection
         view.delegate = self
         view.dataSource = self
         view.register(ContentCollectionViewCell.self, forCellWithReuseIdentifier: ContentCollectionViewCell.reuseIdentifier)
-        
+        view.register(SupplyCollectionViewCell.self, forSupplementaryViewOfKind: UICollectionView.header, withReuseIdentifier: SupplyCollectionViewCell.reuseIdentifier)
+        view.register(SupplyCollectionViewCell.self, forSupplementaryViewOfKind: UICollectionView.leading, withReuseIdentifier: SupplyCollectionViewCell.reuseIdentifier)
+
         return view
     }
     
@@ -38,11 +40,11 @@ open class DataSourceService: NSObject, UICollectionViewDataSource, UICollection
     
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if section >= map.final.count { return 0 }
-        return map.final[section].count 
+        return map.final[section].values.count
     }
     
     open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let value = map.final[indexPath.section][indexPath.item]
+        let value = map.final[indexPath.section].values[indexPath.item]
         let model = value.model
         let locate = value.locates
         let locatable = AnyLocatable(section: indexPath.section, week: model.value.inDay, location: locate.lowerBound)
@@ -72,19 +74,99 @@ open class DataSourceService: NSObject, UICollectionViewDataSource, UICollection
         return cell
     }
     
+    open func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        
+        if kind == UICollectionView.header {
+            let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SupplyCollectionViewCell.reuseIdentifier, for: indexPath) as! SupplyCollectionViewCell
+            cell.backgroundColor = collectionView.backgroundColor
+            cell.isCurrent = false
+            
+            if indexPath.section <= map.final.count, indexPath.section != 0,
+               let startDate = map.final[indexPath.section].startDate {
+                
+                let date = startDate.reset(.weekday, value: (indexPath.item + 7) % 7 + 1)
+                if indexPath.item == 0 {
+                    cell.title(indexPath.section == 0 ? "学期" : date?.string(withFormat: "M月"))
+                } else {
+                    cell.title(date?.string(withFormat: "EE", locale: .zh_CN), content: .content(date?.string(withFormat: "d日")))
+                    cell.isCurrent = (indexPath.section == map.nowWeek && date == Date())
+                }
+                
+            } else {
+                if indexPath.item == 0 {
+                    cell.title(indexPath.section == 0 ? "学期" : "\(indexPath.section)周")
+                } else {
+                    if let date = Date().reset(.weekday, value: (indexPath.item + 7) % 7 + 1) {
+                        cell.title(date.string(withFormat: "EE", locale: .zh_CN))
+                    }
+                }
+            }
+            return cell
+            
+        } else if kind == UICollectionView.leading {
+            let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SupplyCollectionViewCell.reuseIdentifier, for: indexPath) as! SupplyCollectionViewCell
+            var timeline: TimeLine!
+            if indexPath.section <= map.final.count {
+                timeline = .init(special: [])
+            } else {
+                timeline = .init(special: map.final[indexPath.section].specialTime)
+            }
+            let layout = TimeLine[timeline.layouts[indexPath.item]].layout
+            switch layout {
+            case .normal(let i):
+                cell.title("\(i)")
+            case .special(let s):
+                cell.title("\(s.description.replacingOccurrences(of: "", with: "\n").trimmingCharacters(in: .whitespacesAndNewlines))")
+            }
+            
+            return cell
+        }
+        
+        fatalError("without kind \(kind)")
+    }
+    
     // MARK: CollectionViewLayoutDataSource
+    
+    open func collectionView(_ collectionView: UICollectionView, numberOfSupplementaryOf kind: String, in section: Int) -> Int {
+        if kind == UICollectionView.header { return 8 }
+        if kind == UICollectionView.leading {
+            if map.final.count <= section {
+                return TimeLine(special: []).count
+            } else {
+                return TimeLine(special: map.final[section].specialTime).count
+            }
+        }
+        return 0
+    }
     
     open func collectionView(_ collectionView: UICollectionView, persentFor indexPath: IndexPath) -> CGFloat {
         1
     }
     
     open func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: CollectionViewLayout, locationForItemAt indexPath: IndexPath) -> AnyLocatable {
-        let value = map.final[indexPath.section][indexPath.item]
-        return AnyLocatable(section: indexPath.section, week: value.model.value.inDay, location: value.locates.lowerBound)
+        let value = map.final[indexPath.section].values[indexPath.item]
+        let locatable = AnyLocatable(section: indexPath.section, week: value.model.value.inDay, location: value.locates.lowerBound)
+        var location = locatable.location
+        if locatable.location >= 5, !map.final[indexPath.section].specialTime.contains(.noon) {
+            location -= 1
+        }
+        if locatable.location >= 9, !map.final[indexPath.section].specialTime.contains(.night) {
+            location -= 1
+        }
+        return AnyLocatable(section: locatable.section, week: locatable.week, location: location)
     }
     
     open func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: CollectionViewLayout, lenthLocate locate: AnyLocatable, at indexPath: IndexPath) -> Int {
-        map.final[indexPath.section][indexPath.item].locates.count
+        let value = map.final[indexPath.section].values[indexPath.item]
+        let locatable = AnyLocatable(section: indexPath.section, week: value.model.value.inDay, location: value.locates.lowerBound)
+        var count = map.final[indexPath.section].values[indexPath.item].locates.count
+        if locatable.location >= 5, !map.final[indexPath.section].specialTime.contains(.noon) {
+            count -= 1
+        }
+        if locatable.location >= 9, !map.final[indexPath.section].specialTime.contains(.night) {
+            count -= 1
+        }
+        return count
     }
     
     // MARK: UIScrollViewDelegate
