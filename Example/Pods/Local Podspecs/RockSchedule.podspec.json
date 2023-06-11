@@ -49,6 +49,7 @@
 
         ]
       },
+      "resources": "RockSchedule/Assets/*.xcassets",
       "script_phases": [
         {
           "name": "R",
@@ -146,7 +147,6 @@
     {
       "name": "Views",
       "source_files": "RockSchedule/Classes/Views/**/*.swift",
-      "resources": "RockSchedule/Assets/*.xcassets",
       "dependencies": {
         "RockSchedule/RSwift": [
 

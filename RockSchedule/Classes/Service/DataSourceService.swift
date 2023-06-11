@@ -32,6 +32,13 @@ open class DataSourceService: NSObject, UICollectionViewDataSource, UICollection
         return view
     }
     
+    private lazy var backgroudView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(resource: R.color.scheduleCollectionViewCurrentBackline)
+        view.isUserInteractionEnabled = false
+        return view
+    }()
+    
     // MARK: UICollectionViewDataSource
     
     open func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -89,7 +96,12 @@ open class DataSourceService: NSObject, UICollectionViewDataSource, UICollection
                     cell.title(indexPath.section == 0 ? "学期" : date?.string(withFormat: "M月"))
                 } else {
                     cell.title(date?.string(withFormat: "EE", locale: .zh_CN), content: .content(date?.string(withFormat: "d日")))
-                    cell.isCurrent = (indexPath.section == map.nowWeek && date == Date())
+                    
+                    if indexPath.section == map.nowWeek {
+                        if let date, Calendar(identifier: .gregorian).isDate(date, equalTo: Date(), toGranularity: .day) {
+                            cell.isCurrent = true
+                        } else { cell.isCurrent = false }
+                    } else { cell.isCurrent = false }
                 }
                 
             } else {
@@ -118,7 +130,6 @@ open class DataSourceService: NSObject, UICollectionViewDataSource, UICollection
             case .special(let s):
                 cell.title("\(s.description.replacingOccurrences(of: "", with: "\n").trimmingCharacters(in: .whitespacesAndNewlines))")
             }
-            
             return cell
         }
         
@@ -160,10 +171,10 @@ open class DataSourceService: NSObject, UICollectionViewDataSource, UICollection
         let value = map.final[indexPath.section].values[indexPath.item]
         let locatable = AnyLocatable(section: indexPath.section, week: value.model.value.inDay, location: value.locates.lowerBound)
         var count = map.final[indexPath.section].values[indexPath.item].locates.count
-        if locatable.location >= 5, !map.final[indexPath.section].specialTime.contains(.noon) {
+        if locatable.location >= 5, map.final[indexPath.section].specialTime.contains(.noon) {
             count -= 1
         }
-        if locatable.location >= 9, !map.final[indexPath.section].specialTime.contains(.night) {
+        if locatable.location >= 9, map.final[indexPath.section].specialTime.contains(.night) {
             count -= 1
         }
         return count

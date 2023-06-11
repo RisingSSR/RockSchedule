@@ -53,6 +53,7 @@ Pod::Spec.new do |s|
   # R.swift
   s.subspec 'RSwift' do |rSwift|
       rSwift.dependency 'R.swift'
+      rSwift.resources = "RockSchedule/Assets/*.xcassets"
       rSwift.script_phases = [{
           :name => 'R',
           :script => '"$PODS_ROOT/R.swift/rswift" generate "$SRCROOT/../RockSchedule/Classes/R.generated.swift"',
@@ -120,7 +121,6 @@ Pod::Spec.new do |s|
   # 视图
   s.subspec 'Views' do |views|
       views.source_files = 'RockSchedule/Classes/Views/**/*.swift'
-      views.resources = "RockSchedule/Assets/*.xcassets"
       views.dependency 'RockSchedule/RSwift'
   end
   
