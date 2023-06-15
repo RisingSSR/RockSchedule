@@ -33,6 +33,10 @@ public struct Request {
         case custom(String)
     }
     
+    public static let shared = Request()
+    
+    private init() { }
+    
     public static func request(attribute atr: Attribute, response: @escaping (AFResult<CombineItem>) -> Void) {
         switch atr {
         case .dataRequest(let dataRequest):

@@ -13,6 +13,8 @@ open class DataSourceService: NSObject, UICollectionViewDataSource, UICollection
     private var _scrollViewStartPosPoint: CGPoint = .zero
     private var _scrollDirection: Int = 0
     
+    // MARK: Method
+    
     open func createCollectionView(prepareWidth width: CGFloat) -> UICollectionView {
         let layout = CollectionViewLayout()
         layout.widthForLeadingSupplementaryView = 30
@@ -31,6 +33,8 @@ open class DataSourceService: NSObject, UICollectionViewDataSource, UICollection
 
         return view
     }
+    
+    // MARK: Lazy
     
     private lazy var backgroudView: UIView = {
         let view = UIView()
@@ -67,9 +71,9 @@ open class DataSourceService: NSObject, UICollectionViewDataSource, UICollection
         case .mine:
             if locate.lowerBound <= 4 {
                 cell.drawType = .morning
-            } else if locate.lowerBound <= 8 {
+            } else if locate.lowerBound <= 9 {
                 cell.drawType = .afternoon
-            } else if locate.lowerBound <= 12 {
+            } else if locate.lowerBound <= 14 {
                 cell.drawType = .night
             }
         case .custom:
@@ -97,10 +101,10 @@ open class DataSourceService: NSObject, UICollectionViewDataSource, UICollection
                 } else {
                     cell.title(date?.string(withFormat: "EE", locale: .zh_CN), content: .content(date?.string(withFormat: "d日")))
                     
-                    if indexPath.section == map.nowWeek {
-                        if let date, Calendar(identifier: .gregorian).isDate(date, equalTo: Date(), toGranularity: .day) {
-                            cell.isCurrent = true
-                        } else { cell.isCurrent = false }
+                    if indexPath.section == map.showWeek, let date, date.componet(.weekday) == Date().componet(.weekday) {
+                        cell.isCurrent = true
+                        backgroudView.frame = CGRect(x: cell.frame.origin.x, y: -CGFloat(1 << 5), width: cell.frame.height, height: CGFloat((1 << 5) * 3))
+                        collectionView.insertSubview(backgroudView, at: 0)
                     } else { cell.isCurrent = false }
                 }
                 

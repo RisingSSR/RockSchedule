@@ -76,13 +76,36 @@ public struct TimeLine: Codable {
     
     public var count: Int { 12 + special.count }
     
-    public private(set) lazy var layouts: [Layout] = {
+    public private(set) var layouts: [Layout] = {
         var layouts = [Layout]()
-        for i in 1...12 {
-            layouts.append(.normal(i))
-        }
+        for i in 1...12 { layouts.append(.normal(i)) }
         return layouts
     }()
+    
+    private func second(of component: DateComponents) -> Int {
+        (component.hour ?? 0) * 60 * 60 + (component.minute ?? 0) * 60 + (component.second ?? 0)
+    }
+    
+    public var pesent: CGFloat {
+        let secondOfDate = second(of: Calendar(identifier: .gregorian).dateComponents(in: .CQ, from: Date()))
+        var secondOfRight = second(of: TimeLine[layouts[0]].from)
+        if secondOfDate <= secondOfRight { return 1 }
+        var secondOfLeft = secondOfDate
+        for layout in layouts {
+            var R_isFrom = false
+            repeat {
+                secondOfLeft = secondOfRight
+                let dateComponents = R_isFrom ? TimeLine[layout].from : TimeLine[layout].to
+                secondOfRight = second(of: dateComponents)
+                if secondOfDate > secondOfLeft, secondOfDate <= secondOfRight {
+                    let single: CGFloat = R_isFrom ? -1 : 1
+                    return single * CGFloat(secondOfDate - secondOfLeft) / CGFloat(secondOfRight - secondOfLeft)
+                }
+                R_isFrom.toggle()
+            } while R_isFrom
+        }
+        return CGFloat(count + 1)
+    }
     
     // MARK: static
     

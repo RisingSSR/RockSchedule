@@ -8,6 +8,8 @@
 import Foundation
 import WCDBSwift
 
+// MARK: Disk
+
 public struct Cache {
     public enum Keyname: Int, Codable {
         case mine = 0
@@ -23,11 +25,17 @@ public struct Cache {
         }
     }
     
+    public enum TouchElement {
+        case compare(Key)
+        case keyName(Keyname)
+    }
+    
     public static let shared = Cache()
     
-    public private(set) var keyMapTable: [Keyname: Key]
-    public private(set) var itemCache: LRUCache<Key, CombineItem>
     private var keyCache: Set<Key>
+    public private(set) var keyMapTable: [Keyname: Key]
+    
+    public private(set) var itemCache: LRUCache<Key, CombineItem>
     
     private init() {
         keyMapTable = [:]
@@ -38,22 +46,19 @@ public struct Cache {
     // !!!: Key
     
     public mutating func disk(cache key: Key, for name: Keyname? = nil) {
-        if let name {
-            keyMapTable[name] = key
-        }
+        if let name { keyMapTable[name] = key }
         keyCache.insert(key)
     }
     
-    public func diskKey(for key: Key? = nil, keyName name: Keyname? = nil) -> Key? {
-        var iden: Key?
-        if let name {
-            iden = keyMapTable[name]
-//            if let key { iden? &= key.service }
+    public func diskKey(for element: TouchElement) -> Key? {
+        switch element {
+        case .compare(let t):
+            guard var value = keyCache.first(where: { $0 == t }) else { return t }
+            value.union(service: t.service)
+            return value
+        case .keyName(let keyname):
+            return keyMapTable[keyname]
         }
-        if iden == nil, let key {
-            iden = keyCache.first { $0 == key }
-        }
-        return iden
     }
     
     // !!!: Item
@@ -63,18 +68,9 @@ public struct Cache {
         itemCache.setValue(item, forKey: item.key)
     }
     
-    public func diskItem(for key: Key? = nil, keyName name: Keyname? = nil) -> CombineItem? {
-        var item: CombineItem? = nil
-//        let iden = diskKey(for: key, keyName: name)
-//        if let iden {
-//            item = itemCache.value(forKey: iden)
-//            item?.key &= iden.service
-//        }
-//        if item == nil, let key {
-//            item = itemCache.value(forKey: key)
-//            item?.key &= key.service
-//        }
-        return item
+    public func diskItem(for element: TouchElement) -> CombineItem? {
+        guard let key = diskKey(for: element) else { return nil }
+        return itemCache.value(forKey: key)
     }
 }
 
@@ -88,14 +84,74 @@ extension Cache.Keyname: Comparable {
     }
 }
 
+// MARK: Mem
+
 public extension Cache {
-    static var appGroup: String = ""
-    static var fileURL: URL {
-        FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup)!
+    static var appGroup: String?
+    static var fileStr: String {
+        var str: String?
+        if let appGroup {
+            str = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup)?.path
+        }
+        if str == nil {
+            str = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
+        }
+        return str!
+    }
+    static var userDefaults: UserDefaults {
+        UserDefaults(suiteName: appGroup) ?? .standard
     }
     
-//    static lazy let db: Database = {
-//        let db = Database(withPath: fileURL.appendingPathComponent("schedule_WCDB").path)
-//        return db
-//    }()
+    static let db: Database = {
+        let db = Database(withPath: fileStr.appending("/schedule_WCDB"))
+        try? db.create(table: "key", of: Key.self)
+        return db
+    }()
+    
+    // !!!: Key
+    
+    static func mem(cache key: Key, for name: Keyname? = nil) {
+        if let name {
+            userDefaults.set(key, forKey: name.name)
+        }
+        try? db.run(transaction: {
+            try? db.delete(fromTable: "key", where: Key.Properties.sno == key.sno
+                           && Key.Properties.type.rawValue == key.type.rawValue)
+            try? db.insert(objects: key, intoTable: "key")
+        })
+    }
+    
+    static func memKey(for element: TouchElement) -> Key? {
+        switch element {
+        case .compare(var t):
+            let res: Key? = try? db.getObject(on: Key.Properties.all, fromTable: "key")
+            if let res { t.union(service: res.service) }
+            return t
+        case .keyName(let keyname):
+            var res = userDefaults.object(forKey: keyname.name) as? Key
+            let cache: Key? = try? db.getObject(on: Key.Properties.all, fromTable: "key")
+            res = res ?? cache
+            if let cache { res?.union(service: cache.service) }
+            return res
+        }
+    }
+    
+    // !!!: Item
+    
+    static func mem(cache item: CombineItem, for name: Keyname? = nil) {
+        mem(cache: item.key, for: name)
+        if let t = try? db.isTableExists(item.key.keyName), !t {
+            try? db.create(table: item.key.keyName, of: Course.self)
+        }
+        try? db.run(transaction: {
+            try? db.delete(fromTable: item.key.keyName)
+            try? db.insert(objects: item.values, intoTable: item.key.keyName)
+        })
+    }
+    
+    static func memItem(for element: TouchElement) -> CombineItem? {
+        guard let key = memKey(for: element) else { return nil }
+        guard let values: [Course] = try? db.getObjects(on: Course.Properties.all, fromTable: key.keyName) else { return nil }
+        return CombineItem(key: key, values: values)
+    }
 }

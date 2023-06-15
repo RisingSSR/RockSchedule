@@ -23,9 +23,10 @@ open class ContentCollectionViewCell: UICollectionViewCell {
     
     public var drawType: DrawType {
         willSet {
+            backImgView.isHidden = true
             switch newValue {
             case .morning:
-                contentView.backgroundColor = UIColor(resource: R.color.scheduleContentBackgroundAfternoon)
+                contentView.backgroundColor = UIColor(resource: R.color.scheduleContentBackgroundMorning)
                 titleLab.textColor = UIColor(resource: R.color.scheduleContentTextMorning)
                 contentLab.textColor = UIColor(resource: R.color.scheduleContentTextMorning)
                 multyView.backgroundColor = UIColor(resource: R.color.scheduleContentTextMorning)
@@ -45,7 +46,10 @@ open class ContentCollectionViewCell: UICollectionViewCell {
                 contentLab.textColor = UIColor(resource: R.color.scheduleContentTextOther)
                 multyView.backgroundColor = UIColor(resource: R.color.scheduleContentTextOther)
             case .custom:
-                break
+                backImgView.isHidden = false
+                titleLab.textColor = UIColor(resource: R.color.scheduleContentTextCustom)
+                contentLab.textColor = UIColor(resource: R.color.scheduleContentTextCustom)
+                multyView.backgroundColor = UIColor(resource: R.color.scheduleContentTextCustom)
             }
         }
     }
@@ -87,6 +91,7 @@ open class ContentCollectionViewCell: UICollectionViewCell {
         backgroundColor = .clear
         contentView.layer.cornerRadius = 8
         contentView.clipsToBounds = true
+        contentView.addSubview(backImgView)
         contentView.addSubview(titleLab)
         contentView.addSubview(contentLab)
         contentView.addSubview(multyView)
@@ -131,6 +136,13 @@ open class ContentCollectionViewCell: UICollectionViewCell {
         let view = UIView(frame: CGRect(x: .zero, y: 4, width: 8, height: 2))
         view.layer.cornerRadius = view.frame.height / 2
         view.clipsToBounds = true
+        view.isHidden = true
+        return view
+    }()
+    
+    public private(set) lazy var backImgView: UIImageView = {
+        let view = UIImageView(image: UIImage(resource: R.image.scheduleCustom))
+        view.contentMode = .scaleAspectFill
         view.isHidden = true
         return view
     }()

@@ -42,4 +42,8 @@ public extension Date {
         dateFormatter.dateFormat = format
         return dateFormatter.string(from: self)
     }
+    
+    func componet(_ componet: Calendar.Component) -> Int {
+        Calendar(identifier: .gregorian).component(componet, from: self)
+    }
 }

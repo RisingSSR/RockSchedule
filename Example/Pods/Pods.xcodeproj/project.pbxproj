@@ -42,6 +42,7 @@
 		1426060F86538FF7ED5F95A4589C5F1C /* Course.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53425483753079DBF0CFA7BC017931F0 /* Course.swift */; };
 		1444B4C6032A47914B85DEF2B89CF086 /* StatementUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C33AD2675C404508EE99ABF1F802EF2 /* StatementUpdate.swift */; };
 		147CA51D2A35DDCD00CAA578 /* R.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 147CA51C2A35DDCD00CAA578 /* R.generated.swift */; };
+		147CA51F2A39AE0200CAA578 /* PhotoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 147CA51E2A39AE0200CAA578 /* PhotoCollectionViewCell.swift */; };
 		187716BED8574FDCDF81C1942FB6680E /* Unifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73AD58B389E2945F1A8724801497275 /* Unifiable.swift */; };
 		19296CC45EE806AD0AB1733D3702B7C9 /* vdbeblob.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BF04C3B8BDA35ACC02E472BFE97C017 /* vdbeblob.c */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		197457852FC83E905248660B0F930452 /* AuthenticationInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32457047D52DEBD847A7EA32632B910 /* AuthenticationInterceptor.swift */; };
@@ -193,7 +194,6 @@
 		892643A37C88B0743763D6ACA06E2509 /* fts3_aux.c in Sources */ = {isa = PBXBuildFile; fileRef = 0E318B1991001674BB3F2075FA081A49 /* fts3_aux.c */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		896578089E42DF0D1D740B206BAF5B71 /* ContentCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D812FF0510E301E126A5EA6083F49FA /* ContentCollectionViewCell.swift */; };
 		89930A46BF45A614F9AB23C5B7BAA556 /* os.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BF50411B030297CF87BA26CB5F55FBA /* os.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		8A120DCDBB7EA9C355EEDD6136ED0E8A /* ColorSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E00B0F53597EC21B128B8F84D9F24E /* ColorSupport.swift */; };
 		8A1A9BCF376C253932BBF398A62CF289 /* DataResource+Integrations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CFFC3383BFED2FDDFBDBD55D075F87C /* DataResource+Integrations.swift */; };
 		8C4E82B50E8CC27393B42E0A029EBEFA /* TableConstraintBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B00A94EDB719179389FD741A6C8162 /* TableConstraintBinding.swift */; };
 		8DF40B604A2ED3816FC1CE0ABABAF0C7 /* Optional.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4919DFDDCC64F4359F84A7B76C9A26E /* Optional.swift */; };
@@ -531,6 +531,7 @@
 		1322E21D8DF1A54E2E50CA84AAB0B714 /* SQLite-Bridging.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "SQLite-Bridging.h"; path = "swift/source/util/SQLite-Bridging.h"; sourceTree = "<group>"; };
 		13C5F2FD03F4DF65BE1C2D81EDB39F57 /* StringResource+Integrations.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "StringResource+Integrations.swift"; path = "Sources/RswiftResources/Integrations/StringResource+Integrations.swift"; sourceTree = "<group>"; };
 		147CA51C2A35DDCD00CAA578 /* R.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = R.generated.swift; path = Example/RockSchedule/Classes/R.generated.swift; sourceTree = "<group>"; };
+		147CA51E2A39AE0200CAA578 /* PhotoCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PhotoCollectionViewCell.swift; path = RockSchedule/Classes/Views/PhotoCollectionViewCell.swift; sourceTree = "<group>"; };
 		153F78AA5603E74EDC7B9F63F59C86B3 /* StatementReindex.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = StatementReindex.swift; path = swift/source/abstract/StatementReindex.swift; sourceTree = "<group>"; };
 		1602BB13A0D8241393965C8E41BFFE1C /* ResponseSerialization.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ResponseSerialization.swift; path = Source/ResponseSerialization.swift; sourceTree = "<group>"; };
 		16A946400C794E8D7F322A936CA3454C /* sqlcipher.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = sqlcipher.h; path = src/sqlcipher.h; sourceTree = "<group>"; };
@@ -796,7 +797,6 @@
 		AE7018FE54ACCA9552AB1298147363FD /* Pods-RockSchedule_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-RockSchedule_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		AE84F2C4B81E28344581FFD9C6F15C33 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		B2880AD75A8A8005BD1B22DFECEC0697 /* sqlite3rtree.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = sqlite3rtree.h; path = ext/rtree/sqlite3rtree.h; sourceTree = "<group>"; };
-		B2E00B0F53597EC21B128B8F84D9F24E /* ColorSupport.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ColorSupport.swift; path = RockSchedule/Classes/Views/ColorSupport.swift; sourceTree = "<group>"; };
 		B39084BC63FE9861BB088435D026AD9C /* Handle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Handle.swift; path = swift/source/abstract/Handle.swift; sourceTree = "<group>"; };
 		B3CF92365D6AE0F35C3602CF6C0872AE /* WCDBOptimizedSQLCipher */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = WCDBOptimizedSQLCipher; path = sqlcipher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5595EC051DE463F03B3A75032C166C6 /* SupplyCollectionViewCell.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SupplyCollectionViewCell.swift; path = RockSchedule/Classes/Views/SupplyCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -1036,9 +1036,9 @@
 		04BF5700DE39C14BF2E89D8B52397A26 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				B2E00B0F53597EC21B128B8F84D9F24E /* ColorSupport.swift */,
 				6D812FF0510E301E126A5EA6083F49FA /* ContentCollectionViewCell.swift */,
 				B5595EC051DE463F03B3A75032C166C6 /* SupplyCollectionViewCell.swift */,
+				147CA51E2A39AE0200CAA578 /* PhotoCollectionViewCell.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -2551,8 +2551,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				C48D3077EBEE5607F2ABF3984D42644D /* Cache.swift in Sources */,
+				147CA51F2A39AE0200CAA578 /* PhotoCollectionViewCell.swift in Sources */,
 				EF1F8EB8DA1F8A035752C533CE888F38 /* CollectionViewLayout.swift in Sources */,
-				8A120DCDBB7EA9C355EEDD6136ED0E8A /* ColorSupport.swift in Sources */,
 				896578089E42DF0D1D740B206BAF5B71 /* ContentCollectionViewCell.swift in Sources */,
 				D89BDAAD1B5E5AD02E398DCCECA2235C /* CountedSet.swift in Sources */,
 				1426060F86538FF7ED5F95A4589C5F1C /* Course.swift in Sources */,

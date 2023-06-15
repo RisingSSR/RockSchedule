@@ -42,6 +42,7 @@ public struct Key: Codable {
     
     public let sno: String
     public let type: Kind
+    public var keyName: String { type.rawValue + sno }
     
     public private(set) var start: Date?
     public var recentRequest: Date
@@ -58,7 +59,7 @@ public struct Key: Codable {
     public mutating func setEXP(nowWeek n: Int) {
         let calendar = Calendar(identifier: .gregorian)
         guard let startOfWeek = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear, .weekday], from: Date())) else { return }
-        guard let openingWeek = calendar.date(byAdding: .weekOfYear, value: -n, to: startOfWeek) else { return }
+        guard let openingWeek = calendar.date(byAdding: .weekOfYear, value: -(n - 1) , to: startOfWeek) else { return }
         var components = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear, .weekday], from: openingWeek)
         components.weekday = 2
         start = calendar.date(from: components)
@@ -112,12 +113,16 @@ extension Key: TableCodable {
 
 public class CombineItem {
     
-    public let key: Key
+    public private(set) var key: Key
     public private(set) var values: [Course]
     
     public init(key: Key, values: [Course] = []) {
         self.key = key
         self.values = values
+    }
+    
+    public func union(service: Key.Service) {
+        key.union(service: service)
     }
 }
 

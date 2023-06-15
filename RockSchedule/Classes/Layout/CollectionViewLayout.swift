@@ -147,7 +147,7 @@ open class CollectionViewLayout: UICollectionViewLayout {
         case .cell:
             if let locate = dataSource?.collectionView(collectionView!, layout: self, locationForItemAt: indexPath) {
                 let x = CGFloat(locate.section) * (collectionView?.frame.width ?? 0) + widthForLeadingSupplementaryView + CGFloat(locate.week - 1) * (itemSize.width + columnSpacing)
-                let y = heightForHeaderSupplementaryView + CGFloat(locate.location - 1) * (itemSize.height + lineSpacing)
+                let y = heightForHeaderSupplementaryView + CGFloat(locate.location - 1) * (itemSize.height + lineSpacing) + lineSpacing
                 let lenth = dataSource?.collectionView(collectionView!, layout: self, lenthLocate: locate, at: indexPath) ?? 0
                 let height = CGFloat(lenth) * itemSize.height + CGFloat(lenth - 1) * columnSpacing
                 let frame = CGRect(x: x, y: y, width: itemSize.width, height: height)
@@ -175,7 +175,7 @@ open class CollectionViewLayout: UICollectionViewLayout {
                     return
                 case UICollectionView.leading:
                     let x = CGFloat(indexPath.section) * (collectionView?.frame.width ?? 0)
-                    let y = heightForHeaderSupplementaryView + CGFloat(indexPath.item) * (lineSpacing + itemSize.height)
+                    let y = heightForHeaderSupplementaryView + CGFloat(indexPath.item) * (lineSpacing + itemSize.height) + lineSpacing
                     let frame = CGRect(x: x, y: y, width: widthForLeadingSupplementaryView, height: itemSize.height)
                     attributes.frame = frame
                     return

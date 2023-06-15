@@ -20,7 +20,7 @@ Pod::Spec.new do |s|
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'RisingSSR' => '2769119954@qq.com' }
   s.source           = { :git => 'https://github.com/RisingSSR/RockSchedule.git', :tag => s.version.to_s }
-  s.ios.deployment_target = '11.0'
+  s.deployment_target = '11.0'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   
   # 作为第三方库使用
@@ -138,7 +138,7 @@ Pod::Spec.new do |s|
   end
   
   #s.resource_bundles = {
-  #    'RockSchedule' => ['RockSchedule/Assets/Schedule/*.xcassets']
+  #    'RockSchedule' => ['RockSchedule/Assets/*.xcassets']
   #}
   
 end

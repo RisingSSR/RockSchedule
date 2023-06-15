@@ -28,6 +28,7 @@ open class FinalMap: Map {
     public private(set) var sections: Int
     public private(set) var nowWeek: Int
     public private(set) var startDate: Date?
+    public var showWeek: Int { nowWeek < 0 ? 0 : min(nowWeek, sections) }
     
     public var useImmediate: Bool = false
     private var finalRange: [SectionModel]
@@ -90,7 +91,7 @@ open class FinalMap: Map {
         }
         if item.key.type != .custom {
             startDate = item.key.start
-            nowWeek = Calendar(identifier: .gregorian).dateComponents([.weekOfYear], from: startDate ?? Date(), to: Date()).weekOfYear ?? 0
+            nowWeek = (Calendar(identifier: .gregorian).dateComponents([.weekOfYear], from: startDate ?? Date(), to: Date()).weekOfYear ?? -1) + 1
         }
     }
     
