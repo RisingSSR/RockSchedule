@@ -37,6 +37,40 @@ public struct Request {
     
     private init() { }
     
+    public var limited: TimeInterval = 45 * 60 * 60
+    
+    // MARK: Imm request
+    
+    public func policy(request keys: Set<Key>, response: @escaping (AFResult<CombineItem>) -> Void) {
+        let date = Date()
+        for key in keys {
+            if key.type == .custom {
+                Request.requesCustom(key: key, disk: true) { response(.success($0)) }
+                continue
+            }
+            let diskKey = Cache.shared.diskKey(for: .compare(key)) ?? key
+            var diskItem = Cache.shared.diskItem(for: .compare(diskKey))
+            if diskItem == nil, diskKey.service.contains(.cache) {
+                diskItem = Cache.memItem(for: .compare(diskKey))
+            }
+            if let diskItem, let start = key.start, start.timeIntervalSince(date) <= limited {
+                response(.success(diskItem))
+                continue
+            }
+            let attribute: Attribute = (key.type == .student ? .dataRequest(.student(key.sno)) : .dataRequest(.teacher(key.sno)))
+            Request.request(attribute: attribute) { result in
+                if case let .success(item) = result {
+                    item.union(service: key.service)
+                    response(.success(item))
+                } else {
+                    response(result)
+                }
+            }
+        }
+    }
+    
+    // MARK: Static request
+    
     public static func request(attribute atr: Attribute, response: @escaping (AFResult<CombineItem>) -> Void) {
         switch atr {
         case .dataRequest(let dataRequest):
@@ -86,6 +120,30 @@ public struct Request {
                 response(results)
             }
         }
+    }
+}
+
+public extension Request {
+    /// - key: 如果有key，则根据key去创建或取出，如果没有，则去cache问，如果还没有，则创建临时key
+    /// - item: 如果取出item则返回，取不出则创建
+    static func requesCustom(key: Key? = nil, disk: Bool = false, response: @escaping (CombineItem) -> Void) {
+        var key = key
+        if key == nil {
+            if disk { key = Cache.shared.diskKey(for: .keyName(.custom)) }
+            if key == nil { key = Cache.memKey(for: .keyName(.custom)) }
+        }
+        if key == nil { key = Key(sno: "RedRock_\(Date().timeIntervalSince1970)", type: .custom) }
+        guard let key else { return }
+        
+        var item: CombineItem? = nil
+        if disk { item = Cache.shared.diskItem(for: .compare(key)) }
+        if item == nil { item = Cache.memItem(for: .compare(key)) }
+        if item == nil {
+            item = CombineItem(key: key)
+            if disk { Cache.shared.disk(cache: item!) }
+            Cache.mem(cache: item!)
+        }
+        if let item { response(item) }
     }
 }
 

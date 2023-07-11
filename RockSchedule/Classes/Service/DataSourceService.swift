@@ -9,11 +9,16 @@ import UIKit
  
 open class DataSourceService: NSObject, UICollectionViewDataSource, UICollectionViewDelegate, CollectionViewLayoutDataSource {
     
-    public private(set) var map = FinalMap(keyFetal: .double)
+    public private(set) var map: FinalMap
+    
     private var _scrollViewStartPosPoint: CGPoint = .zero
     private var _scrollDirection: Int = 0
     
     // MARK: Method
+    
+    public init(_ keyFetal: FinalMap.KeyFetal) {
+        map = FinalMap(keyFetal: keyFetal)
+    }
     
     open func createCollectionView(prepareWidth width: CGFloat) -> UICollectionView {
         let layout = CollectionViewLayout()
@@ -27,9 +32,14 @@ open class DataSourceService: NSObject, UICollectionViewDataSource, UICollection
         let view = UICollectionView(frame: CGRect(x: 0, y: 0, width: width, height: 0), collectionViewLayout: layout)
         view.delegate = self
         view.dataSource = self
+        
         view.register(ContentCollectionViewCell.self, forCellWithReuseIdentifier: ContentCollectionViewCell.reuseIdentifier)
+        
         view.register(SupplyCollectionViewCell.self, forSupplementaryViewOfKind: UICollectionView.header, withReuseIdentifier: SupplyCollectionViewCell.reuseIdentifier)
         view.register(SupplyCollectionViewCell.self, forSupplementaryViewOfKind: UICollectionView.leading, withReuseIdentifier: SupplyCollectionViewCell.reuseIdentifier)
+        
+        view.register(PhotoCollectionViewCell.self, forSupplementaryViewOfKind: UICollectionView.placehoder, withReuseIdentifier: PhotoCollectionViewCell.ReuseIdentifier.placehoder(.noclass).identifier)
+        view.register(PhotoCollectionViewCell.self, forSupplementaryViewOfKind: UICollectionView.pointer, withReuseIdentifier: PhotoCollectionViewCell.ReuseIdentifier.pointer.identifier)
 
         return view
     }
@@ -95,15 +105,15 @@ open class DataSourceService: NSObject, UICollectionViewDataSource, UICollection
             if indexPath.section <= map.final.count, indexPath.section != 0,
                let startDate = map.final[indexPath.section].startDate {
                 
-                let date = startDate.reset(.weekday, value: (indexPath.item + 7) % 7 + 1)
                 if indexPath.item == 0 {
-                    cell.title(indexPath.section == 0 ? "学期" : date?.string(withFormat: "M月"))
+                    cell.title(indexPath.section == 0 ? "学期" : startDate.string(withFormat: "M月"))
                 } else {
+                    let date = startDate.reset(.weekday, value: (indexPath.item + 7) % 7 + 1)
                     cell.title(date?.string(withFormat: "EE", locale: .zh_CN), content: .content(date?.string(withFormat: "d日")))
                     
                     if indexPath.section == map.showWeek, let date, date.componet(.weekday) == Date().componet(.weekday) {
                         cell.isCurrent = true
-                        backgroudView.frame = CGRect(x: cell.frame.origin.x, y: -CGFloat(1 << 5), width: cell.frame.height, height: CGFloat((1 << 5) * 3))
+                        backgroudView.frame = CGRect(x: cell.frame.origin.x, y: 0, width: cell.frame.height, height: collectionView.frame.height)
                         collectionView.insertSubview(backgroudView, at: 0)
                     } else { cell.isCurrent = false }
                 }
@@ -135,6 +145,16 @@ open class DataSourceService: NSObject, UICollectionViewDataSource, UICollection
                 cell.title("\(s.description.replacingOccurrences(of: "", with: "\n").trimmingCharacters(in: .whitespacesAndNewlines))")
             }
             return cell
+        } else if kind == UICollectionView.placehoder {
+            let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: PhotoCollectionViewCell.ReuseIdentifier.placehoder(.noclass).identifier, for: indexPath) as! PhotoCollectionViewCell
+            
+            if map.final.count <= 1 {
+                cell.placehoder(in: .error404)
+            } else {
+                cell.placehoder()
+            }
+            
+            return cell
         }
         
         fatalError("without kind \(kind)")
@@ -150,6 +170,10 @@ open class DataSourceService: NSObject, UICollectionViewDataSource, UICollection
             } else {
                 return TimeLine(special: map.final[section].specialTime).count
             }
+        }
+        if kind == UICollectionView.placehoder {
+            if section >= map.final.count { return 1 }
+            return map.final[section].values.count == 0 ? 1 : 0
         }
         return 0
     }
@@ -195,6 +219,8 @@ open class DataSourceService: NSObject, UICollectionViewDataSource, UICollection
     }
     
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        backgroudView.frame.origin.y = scrollView.contentOffset.y
+        
         if _scrollDirection == 0 {
             if abs(_scrollViewStartPosPoint.x - scrollView.contentOffset.x) < abs(_scrollViewStartPosPoint.y - scrollView.contentOffset.y) {
                 _scrollDirection = 1    // Vertical Scrolling

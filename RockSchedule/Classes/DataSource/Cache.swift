@@ -30,7 +30,7 @@ public struct Cache {
         case keyName(Keyname)
     }
     
-    public static let shared = Cache()
+    public static var shared = Cache()
     
     private var keyCache: Set<Key>
     public private(set) var keyMapTable: [Keyname: Key]
